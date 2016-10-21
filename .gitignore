@@ -13,6 +13,7 @@
 *.o
 *.o.*
 *.ko
+*.a
 *.so
 *.so.dbg
 *.mod.c
