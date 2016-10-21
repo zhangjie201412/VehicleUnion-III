@@ -2,8 +2,8 @@
 #include "utils.h"
 #include "cJSON.h"
 #include "flash.h"
-#include "wdg.h"
 #include "sim800.h"
+#include "utils.h"
 
 //ÈÎÎñ¿ØÖÆ¿é
 OS_TCB Led0TaskTCB;
@@ -15,7 +15,6 @@ void led0_task(void *p_arg)
 {
     cJSON *root;
     char *out;
-    char *bytes;
 	OS_ERR err;
 
 	p_arg = p_arg;
@@ -29,9 +28,7 @@ void led0_task(void *p_arg)
         out = cJSON_Print(root);
         logi("out: %s", out);
 
-
         cJSON_Delete(root);
         free(out);
-        iwdg_feed();
 	}
 }

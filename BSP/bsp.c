@@ -2,7 +2,6 @@
 #include "bsp.h"
 #include "stdio.h"
 #include "flash.h"
-#include "wdg.h"
 #include "sim800.h"
 
 #if 1
@@ -64,7 +63,6 @@ void BSP_Init(void)
     /* NVIC configuration */
     NVIC_Configuration();
     flash_init();
-    iwdg_init(IWDG_Prescaler_256, 0xfff);
     sim800_init();
 }
 

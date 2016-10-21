@@ -1,5 +1,6 @@
 #include "start_task.h"
 #include "led_task.h"
+#include "wdg_task.h"
 
 //任务控制块
 OS_TCB StartTaskTCB;
@@ -48,6 +49,22 @@ void start_task(void *p_arg)
 							 (void   	* )0,					
 							 (OS_OPT      )OS_OPT_TASK_STK_CHK|OS_OPT_TASK_STK_CLR,
 							 (OS_ERR 	* )&err);				
+#if 1
+    //watchdog thread
+	OSTaskCreate((OS_TCB 	* )&WdgTaskTCB,		
+			 (CPU_CHAR	* )"wdg task", 		
+							 (OS_TASK_PTR )wdg_task,	
+							 (void		* )0,					
+							 (OS_PRIO	  )WDG_TASK_PRIO,     
+							 (CPU_STK   * )&WDG_TASK_STK[0],	
+							 (CPU_STK_SIZE)WDG_STK_SIZE/10,	
+							 (CPU_STK_SIZE)WDG_STK_SIZE,		
+							 (OS_MSG_QTY  )0,					
+							 (OS_TICK	  )0,					
+							 (void   	* )0,					
+							 (OS_OPT      )OS_OPT_TASK_STK_CHK|OS_OPT_TASK_STK_CLR,
+							 (OS_ERR 	* )&err);				
+#endif
 	
 	OS_TaskSuspend((OS_TCB*)&StartTaskTCB,&err);		//挂起开始任务			
 								 

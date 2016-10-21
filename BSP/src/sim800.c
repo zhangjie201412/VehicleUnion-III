@@ -7,8 +7,8 @@
 #include "ringbuffer.h"
 #include "includes.h"
 
-#define SERV_ADDR   "139.196.153.24"
-#define SERV_PORT   9999
+#define SERV_ADDR   "139.224.17.163"
+#define SERV_PORT   8880
 
 #define SIM800_RB_MAX_SIZE          256
 #define SIM800_CONNECT_RETRY_TIMES  8
@@ -18,6 +18,7 @@ uint8_t mRingBuffer[SIM800_RB_MAX_SIZE];
 struct rb mRb;
 OS_SEM mWait;
 OS_MUTEX mMutex;
+OS_MUTEX mSendMutex;
 
 #define SIM800_CMD_SIZE     8
 sim800_cmd mCmds[SIM800_CMD_SIZE] =
@@ -27,7 +28,7 @@ sim800_cmd mCmds[SIM800_CMD_SIZE] =
     {"AT+CIPMODE=0\r\n", 100},
     {"AT+CGATT?\r\n", 200},
     {"AT+CSTT=\"CMNET\"\r\n", 200},
-    {"AT+CIICR\r\n", 999},
+    {"AT+CIICR\r\n", 3000},
     {"AT+CIFSR\r\n", 300},
     {"AT+CGATT=1\r\n", 300},
 };
@@ -67,12 +68,12 @@ void sim800_powerdown(void)
     sim800_powerup();
 }
 
-void sim800_setup(void)
+bool sim800_setup(void)
 {
+    bool ret;
     OS_ERR err;
     bool connect_done = FALSE;
     uint16_t retry;
-    uint8_t recv;
     uint8_t i;
 
     retry = 0;
@@ -88,6 +89,11 @@ void sim800_setup(void)
             (CPU_CHAR *)"SIM800_MUTEX",
             &err
             );
+    OSMutexCreate(
+            (OS_MUTEX *)&mSendMutex,
+            (CPU_CHAR *)"SIM800_SEND_MUTEX",
+            &err
+            );
 
     while(!connect_done) {
         switch(mState) {
@@ -98,7 +104,7 @@ void sim800_setup(void)
                 mState = STATE_POWERUP;
                 if(sim800_send_cmd("AT\r\n", "AT") == TRUE) {
                     mState = STATE_INITED;
-                    logi("powerup down");
+                    logi("powerup done");
                 } else {
                     mState = STATE_UNINITED;
                     loge("powerup failed");
@@ -109,19 +115,45 @@ void sim800_setup(void)
                 for(i = 0; i < SIM800_CMD_SIZE; i++) {
                     sim800_write((uint8_t *)mCmds[i].cmd,
                             strlen(mCmds[i].cmd));
-                    sim800_delay_ms(mCmds[i].delay);
+                    if(mCmds[i].delay >= 1000) {
+                        sim800_delay(mCmds[i].delay / 1000);
+                    } else {
+                        sim800_delay_ms(mCmds[i].delay);
+                    }
                 }
                 rb_clear(&mRb);
                 mState = STATE_CONNECTING;
                 break;
             case STATE_CONNECTING:
                 logi("%s: STATE_CONNECTING", __func__);
+                ret = sim800_connect(SERV_ADDR, SERV_PORT);
+                if(ret ==TRUE) {
+                    loge("connect success!");
+                    mState = STATE_CONNECTED;
+                } else {
+                    loge("connect failed, retry!");
+                    mState = STATE_UNINITED;
+                    retry ++;
+                }
                 break;
+            case STATE_CONNECTED:
+                logi("%s: STATE_CONNECTED", __func__);
+                connect_done = TRUE;
+                mState = STATE_IDLE;
             default:
                 break;
         }
+        if(retry > SIM800_CONNECT_RETRY_TIMES) {
+            loge("%s: retry = %d", __func__, retry);
+            break;
+        }
     }
-
+    if(!connect_done) {
+        loge("%s: We cannot connect server, retried %d times",
+                __func__, SIM800_CONNECT_RETRY_TIMES);
+        return FALSE;
+    }
+    return TRUE;
 }
 
 void SIM800_USART_IRQHandler(void)
@@ -150,6 +182,8 @@ void sim800_recv(void)
             case STATE_UNINITED:
                 break;
             case STATE_POWERUP:
+            case STATE_CONNECTING:
+            case STATE_SENDING:
                 sim800_lock();
                 rb_put(&mRb, &data, 1);
                 if(buf[0] == 'O' &&
@@ -158,6 +192,10 @@ void sim800_recv(void)
                         buf[3] == '\n') {
                     sim800_up();
                 }
+                sim800_unlock();
+                break;
+            case STATE_IDLE:
+                sim800_lock();
                 sim800_unlock();
             default:
                 break;
@@ -213,12 +251,14 @@ bool sim800_connect(const char *host, uint32_t port)
     snprintf((char *)buf, 128, "AT+CIPSTART=\"TCP\",\"%s\",\"%d\"\r\n",
             host, port);
     logi("%s: %s", __func__, buf);
+    sim800_lock();
     ret = sim800_send_cmd((const char *)buf, "\r\nOK");
     if(ret) {
-        ret = sim800_down(8);
+        ret = sim800_down(10);
         if(ret == TRUE) {
             while(!rb_is_empty(&mRb)) {
                 rb_get(&mRb, &recv, 1);
+                logi("RECV %02x", recv);
                 rx_buf[index ++] = recv;
             }
             sim800_unlock();
@@ -232,6 +272,7 @@ bool sim800_connect(const char *host, uint32_t port)
             return FALSE;
         }
     } else {
+        sim800_unlock();
         return FALSE;
     }
 }
@@ -243,6 +284,21 @@ uint8_t sim800_get_signal(void)
 
 void sim800_send(uint8_t *buf, uint32_t len)
 {
+    OS_ERR err;
+    uint8_t endByte[1] = {0x1a};
+
+    logi("%s: %s", __func__, buf);
+    OSMutexPend(&mSendMutex, 0, OS_OPT_PEND_BLOCKING, 0, &err);
+    mState = STATE_DATA_BUSY;
+    sim800_write("AT+CIPSEND\r\n", 12);
+    sim800_delay_ms(100);
+    sim800_write(buf, len);
+    mState = STATE_SENDING;
+    sim800_write(endByte, 1);
+    sim800_delay_ms(200);
+    mState = STATE_IDLE;
+
+    OSMutexPost(&mSendMutex, OS_OPT_POST_NONE, &err);
 }
 
 
@@ -324,8 +380,10 @@ bool sim800_down(uint16_t sec)
 {
     OS_ERR err;
 
+    logi("%s", __func__);
     OSSemPend(&mWait, sec * OS_CFG_TICK_RATE_HZ, OS_OPT_PEND_BLOCKING, 0, &err);
     if(err == OS_ERR_TIMEOUT) {
+        logi("%s: timeout", __func__);
         return FALSE;
     } else {
         return TRUE;
@@ -335,7 +393,7 @@ bool sim800_down(uint16_t sec)
 void sim800_up(void)
 {
     OS_ERR err;
-
+    logi("%s", __func__);
     OSSemPost(&mWait, OS_OPT_POST_ALL, &err);
 }
 

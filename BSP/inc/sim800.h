@@ -35,7 +35,7 @@ enum StatusType {
 };
 
 //public:
-void sim800_setup(void);
+bool sim800_setup(void);
 void sim800_powerup(void);
 void sim800_powerdown(void);
 
