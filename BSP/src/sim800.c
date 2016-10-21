@@ -5,6 +5,7 @@
 #include "cJSON.h"
 #include "utils.h"
 #include "ringbuffer.h"
+#include "includes.h"
 
 #define SERV_ADDR   "139.196.153.24"
 #define SERV_PORT   9999
@@ -15,6 +16,8 @@
 uint8_t mState;
 uint8_t mRingBuffer[SIM800_RB_MAX_SIZE];
 struct rb mRb;
+OS_SEM mWait;
+OS_MUTEX mMutex;
 
 #define SIM800_CMD_SIZE     8
 sim800_cmd mCmds[SIM800_CMD_SIZE] =
@@ -24,7 +27,7 @@ sim800_cmd mCmds[SIM800_CMD_SIZE] =
     {"AT+CIPMODE=0\r\n", 100},
     {"AT+CGATT?\r\n", 200},
     {"AT+CSTT=\"CMNET\"\r\n", 200},
-    {"AT+CIICR\r\n", 3000},
+    {"AT+CIICR\r\n", 999},
     {"AT+CIFSR\r\n", 300},
     {"AT+CGATT=1\r\n", 300},
 };
@@ -66,20 +69,53 @@ void sim800_powerdown(void)
 
 void sim800_setup(void)
 {
+    OS_ERR err;
     bool connect_done = FALSE;
     uint16_t retry;
     uint8_t recv;
     uint8_t i;
 
     retry = 0;
+    //init for ucos
+    OSSemCreate(
+            (OS_SEM *) &mWait,
+            (CPU_CHAR *)"SIM800_WAIT",
+            (OS_SEM_CTR)0,
+            (OS_ERR *)&err
+            );
+    OSMutexCreate(
+            (OS_MUTEX *)&mMutex,
+            (CPU_CHAR *)"SIM800_MUTEX",
+            &err
+            );
 
     while(!connect_done) {
         switch(mState) {
             case STATE_UNINITED:
-                logi("try to powerup sim800");
+                logi("%s: STATE_UNINITED", __func__);
                 sim800_powerup();
                 sim800_delay(10);
                 mState = STATE_POWERUP;
+                if(sim800_send_cmd("AT\r\n", "AT") == TRUE) {
+                    mState = STATE_INITED;
+                    logi("powerup down");
+                } else {
+                    mState = STATE_UNINITED;
+                    loge("powerup failed");
+                }
+                break;
+            case STATE_INITED:
+                logi("%s: STATE_INITED", __func__);
+                for(i = 0; i < SIM800_CMD_SIZE; i++) {
+                    sim800_write((uint8_t *)mCmds[i].cmd,
+                            strlen(mCmds[i].cmd));
+                    sim800_delay_ms(mCmds[i].delay);
+                }
+                rb_clear(&mRb);
+                mState = STATE_CONNECTING;
+                break;
+            case STATE_CONNECTING:
+                logi("%s: STATE_CONNECTING", __func__);
                 break;
             default:
                 break;
@@ -90,7 +126,6 @@ void sim800_setup(void)
 
 void SIM800_USART_IRQHandler(void)
 {
-
     if(0 == OSRunning)
         return;
     OSIntEnter();
@@ -101,10 +136,32 @@ void SIM800_USART_IRQHandler(void)
 void sim800_recv(void)
 {
     uint8_t data;
+    static uint8_t buf[4];
 
     if(USART_GetITStatus(USART3, USART_IT_RXNE) != RESET) {
         data =USART_ReceiveData(USART3);
         printf("%c", data);
+        buf[0] = buf[1];
+        buf[1] = buf[2];
+        buf[2] = buf[3];
+        buf[3] = data;
+
+        switch(mState) {
+            case STATE_UNINITED:
+                break;
+            case STATE_POWERUP:
+                sim800_lock();
+                rb_put(&mRb, &data, 1);
+                if(buf[0] == 'O' &&
+                        buf[1] == 'K' &&
+                        buf[2] == '\r' &&
+                        buf[3] == '\n') {
+                    sim800_up();
+                }
+                sim800_unlock();
+            default:
+                break;
+        }
     }
 }
 
@@ -114,12 +171,69 @@ static void sim800_callback(void *unused)
 
 bool sim800_send_cmd(const char *cmd, const char *rsp)
 {
-    return TRUE;
+    uint16_t rspLen;
+    uint8_t i, index = 0;
+    uint8_t recv;
+    uint8_t rx_buf[20];
+    bool ret;
+
+    rspLen = strlen(rsp);
+    sim800_lock();
+    rb_clear(&mRb);
+    sim800_write((uint8_t *)cmd, strlen(cmd));
+    ret = sim800_down(4);
+    if(ret == TRUE) {
+        while(!rb_is_empty(&mRb)) {
+            rb_get(&mRb, &recv, 1);
+            rx_buf[index ++] = recv;
+        }
+        for(i = 0; i < rspLen; i++) {
+            if(rsp[i] != rx_buf[i]) {
+                sim800_unlock();
+                return FALSE;
+            }
+        }
+        sim800_unlock();
+        return TRUE;
+    } else {
+        sim800_unlock();
+        return FALSE;
+    }
 }
 
 bool sim800_connect(const char *host, uint32_t port)
 {
-    return TRUE;
+    bool ret;
+    uint8_t buf[128];
+    uint8_t recv;
+    uint8_t rx_buf[20];
+    uint8_t index = 0;
+
+    memset(buf, 0x00, 128);
+    snprintf((char *)buf, 128, "AT+CIPSTART=\"TCP\",\"%s\",\"%d\"\r\n",
+            host, port);
+    logi("%s: %s", __func__, buf);
+    ret = sim800_send_cmd((const char *)buf, "\r\nOK");
+    if(ret) {
+        ret = sim800_down(8);
+        if(ret == TRUE) {
+            while(!rb_is_empty(&mRb)) {
+                rb_get(&mRb, &recv, 1);
+                rx_buf[index ++] = recv;
+            }
+            sim800_unlock();
+            if(strstr((const char *)rx_buf, "CONNECT OK") != NULL) {
+                return TRUE;
+            } else {
+                return FALSE;
+            }
+        } else {
+            sim800_unlock();
+            return FALSE;
+        }
+    } else {
+        return FALSE;
+    }
 }
 
 uint8_t sim800_get_signal(void)
@@ -194,18 +308,34 @@ void sim800_write(uint8_t *buf, uint16_t size)
 
 void sim800_lock(void)
 {
+    OS_ERR err;
+
+    OSMutexPend(&mMutex, 0, OS_OPT_PEND_BLOCKING, 0, &err);
 }
 
 void sim800_unlock(void)
 {
+    OS_ERR err;
+
+    OSMutexPost(&mMutex, OS_OPT_POST_NONE, &err);
 }
 
 bool sim800_down(uint16_t sec)
 {
-    return TRUE;
+    OS_ERR err;
+
+    OSSemPend(&mWait, sec * OS_CFG_TICK_RATE_HZ, OS_OPT_PEND_BLOCKING, 0, &err);
+    if(err == OS_ERR_TIMEOUT) {
+        return FALSE;
+    } else {
+        return TRUE;
+    }
 }
 
 void sim800_up(void)
 {
+    OS_ERR err;
+
+    OSSemPost(&mWait, OS_OPT_POST_ALL, &err);
 }
 

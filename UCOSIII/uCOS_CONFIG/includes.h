@@ -76,6 +76,7 @@
 
 #include  <app_cfg.h>
 #include  <uc_bsp.h>
+#include  <os_cfg_app.h>
 //#include  <uc_bsp_int.h>
 
 
