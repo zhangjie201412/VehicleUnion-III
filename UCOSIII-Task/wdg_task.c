@@ -14,7 +14,8 @@ void wdg_task(void *unused)
     iwdg_init(IWDG_Prescaler_256, 0xfff);
 
     while(1) {
-		OSTimeDlyHMSM(0, 0, WDG_FEED_INTERFVAL, 0, OS_OPT_TIME_HMSM_STRICT, &err); //延时200ms
+		OSTimeDlyHMSM(0, 0, WDG_FEED_INTERFVAL,
+                0, OS_OPT_TIME_HMSM_STRICT, &err);
         iwdg_feed();
     }
 }

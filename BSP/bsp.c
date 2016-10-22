@@ -3,6 +3,7 @@
 #include "stdio.h"
 #include "flash.h"
 #include "sim800.h"
+#include "flexcan.h"
 
 #if 1
 #pragma import(__use_no_semihosting)

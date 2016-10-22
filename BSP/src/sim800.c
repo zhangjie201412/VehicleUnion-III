@@ -7,8 +7,8 @@
 #include "ringbuffer.h"
 #include "includes.h"
 
-#define SERV_ADDR   "139.224.17.163"
-#define SERV_PORT   8880
+#define SERV_ADDR   "139.196.153.24" //"139.224.17.163"
+#define SERV_PORT   9999 //8880
 
 #define SIM800_RB_MAX_SIZE          256
 #define SIM800_CONNECT_RETRY_TIMES  8
@@ -172,7 +172,7 @@ void sim800_recv(void)
 
     if(USART_GetITStatus(USART3, USART_IT_RXNE) != RESET) {
         data =USART_ReceiveData(USART3);
-        printf("%c", data);
+        //printf("%c", data);
         buf[0] = buf[1];
         buf[1] = buf[2];
         buf[2] = buf[3];
@@ -180,6 +180,16 @@ void sim800_recv(void)
 
         switch(mState) {
             case STATE_UNINITED:
+                break;
+            case STATE_SIGNAL:
+                sim800_lock();
+                rb_put(&mRb, &data, 1);
+                if(buf[2] == 'O' &&
+                        buf[3] == 'K') {
+                    sim800_up();
+                }
+
+                sim800_unlock();
                 break;
             case STATE_POWERUP:
             case STATE_CONNECTING:
@@ -279,7 +289,46 @@ bool sim800_connect(const char *host, uint32_t port)
 
 uint8_t sim800_get_signal(void)
 {
-    return 0;
+    uint8_t signal;
+    uint8_t index = 0, i;
+    uint8_t recv;
+    uint8_t rx_buf[20];
+    bool ret;
+    uint8_t *s, *p;
+    uint8_t buf[4];
+
+    sim800_lock();
+    memset(rx_buf, 0x00, 20);
+    mState = STATE_SIGNAL;
+    rb_clear(&mRb);
+    sim800_write("AT+CSQ\r\n", 8);
+#if 1
+    ret = sim800_down(4);
+    if(ret == TRUE) {
+        while(!rb_is_empty(&mRb)) {
+            rb_get(&mRb, &recv, 1);
+            rx_buf[index ++] = recv;
+        }
+        if(NULL != (s = strstr((const char *)rx_buf, "+CSQ:"))) {
+            s = strstr((char *)(s), " ");
+            s =s + 1;
+            p = strstr((char *)(s), ",");
+            if(NULL != s) {
+                i = 0;
+                while(s < p) {
+                    buf[i++] = *(s++);
+                }
+                buf[i] = '\0';
+            }
+            signal = atoi(buf);
+        }
+    } else {
+        signal = 0;
+    }
+#endif
+    sim800_unlock();
+    mState = STATE_IDLE;
+    return signal;
 }
 
 void sim800_send(uint8_t *buf, uint32_t len)
@@ -380,7 +429,7 @@ bool sim800_down(uint16_t sec)
 {
     OS_ERR err;
 
-    logi("%s", __func__);
+    //logi("%s", __func__);
     OSSemPend(&mWait, sec * OS_CFG_TICK_RATE_HZ, OS_OPT_PEND_BLOCKING, 0, &err);
     if(err == OS_ERR_TIMEOUT) {
         logi("%s: timeout", __func__);
@@ -393,7 +442,7 @@ bool sim800_down(uint16_t sec)
 void sim800_up(void)
 {
     OS_ERR err;
-    logi("%s", __func__);
+    //logi("%s", __func__);
     OSSemPost(&mWait, OS_OPT_POST_ALL, &err);
 }
 

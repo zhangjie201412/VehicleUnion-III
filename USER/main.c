@@ -10,7 +10,7 @@ int main(void)
     OS_ERR err;
     CPU_SR_ALLOC();
 
-    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+//    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
     delay_init();
 
     BSP_Init();
