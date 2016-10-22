@@ -2,8 +2,9 @@
 #include "includes.h"
 #include "utils.h"
 #include "pal.h"
+#include "transmit.h"
 
-#define CONTROL_QUEUE_SIZE
+#define CONTROL_QUEUE_SIZE  10
 
 OS_TCB VehiclesTaskTCB;
 CPU_STK VEHICLES_TASK_STK[VEHICLES_STK_SIZE];
@@ -35,14 +36,26 @@ void vehicles_task(void *unused)
 void control_task(void *unused)
 {
     OS_ERR err;
-    MS_MSG_SIZE size;
-    unused = unused;
+    OS_MSG_SIZE size;
+    CtrlItem *ctrlItem;
 
+    unused = unused;
     while(1) {
         //wait for queue post
         //wait for cmd to control the vehicle
 		OSTimeDlyHMSM(0, 0, mVehiclesInterval,
                 0, OS_OPT_TIME_HMSM_STRICT, &err);
+        ctrlItem = OSTaskQPend(
+                (OS_TICK)0,
+                (OS_OPT)OS_OPT_PEND_BLOCKING,
+                (OS_MSG_SIZE*)&size,
+                (CPU_TS*)0,
+                (OS_ERR*)&err
+                );
+        logi("id = %d, cmd_id = %d, value = %d",
+                ctrlItem->id,
+                ctrlItem->cmd_id,
+                ctrlItem->value);
     }
 }
 
