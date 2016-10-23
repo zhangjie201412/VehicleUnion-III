@@ -6,9 +6,16 @@
 #include "utils.h"
 #include "ringbuffer.h"
 #include "includes.h"
+#include "transmit.h"
+#include "config.h"
 
-#define SERV_ADDR   "139.196.153.24" //"139.224.17.163"
-#define SERV_PORT   9999 //8880
+#ifdef SERVER_IS_K
+#define SERV_ADDR   "139.224.17.163"
+#define SERV_PORT   8880
+#elif defined SERVER_IS_VEHICLE_UNION
+#define SERV_ADDR   "139.196.153.24"
+#define SERV_PORT   9999
+#endif
 
 #define SIM800_RB_MAX_SIZE          256
 #define SIM800_CONNECT_RETRY_TIMES  8
@@ -19,6 +26,7 @@ struct rb mRb;
 OS_SEM mWait;
 OS_MUTEX mMutex;
 OS_MUTEX mSendMutex;
+bool mIsConnected = FALSE;
 
 #define SIM800_CMD_SIZE     8
 sim800_cmd mCmds[SIM800_CMD_SIZE] =
@@ -32,6 +40,12 @@ sim800_cmd mCmds[SIM800_CMD_SIZE] =
     {"AT+CIFSR\r\n", 300},
     {"AT+CGATT=1\r\n", 300},
 };
+
+
+bool sim800_is_connected(void)
+{
+    return mIsConnected;
+}
 
 void sim800_delay(uint8_t s)
 {
@@ -95,6 +109,7 @@ bool sim800_setup(void)
             &err
             );
 
+    mIsConnected  = FALSE;
     while(!connect_done) {
         switch(mState) {
             case STATE_UNINITED:
@@ -140,6 +155,7 @@ bool sim800_setup(void)
                 logi("%s: STATE_CONNECTED", __func__);
                 connect_done = TRUE;
                 mState = STATE_IDLE;
+                mIsConnected  = TRUE;
             default:
                 break;
         }
@@ -167,12 +183,14 @@ void SIM800_USART_IRQHandler(void)
 
 void sim800_recv(void)
 {
+    static bool json_start;
     uint8_t data;
     static uint8_t buf[4];
+    OS_ERR err;
 
     if(USART_GetITStatus(USART3, USART_IT_RXNE) != RESET) {
         data =USART_ReceiveData(USART3);
-        //printf("%c", data);
+//        printf("%c", data);
         buf[0] = buf[1];
         buf[1] = buf[2];
         buf[2] = buf[3];
@@ -206,15 +224,27 @@ void sim800_recv(void)
                 break;
             case STATE_IDLE:
                 sim800_lock();
+                if(data == '{') {
+                    json_start = TRUE;
+                    rb_clear(&mRb);
+                    rb_put(&mRb, &data, 1);
+
+                } else if(data == '}') {
+                    rb_put(&mRb, &data, 1);
+                    json_start = FALSE;
+                    //TO FIX
+                    OSTaskSemPost(&TransmitCallbackTaskTCB,
+                            OS_OPT_POST_NONE, &err);
+                } else {
+                    if(json_start) {
+                        rb_put(&mRb, &data, 1);
+                    }
+                }
                 sim800_unlock();
             default:
                 break;
         }
     }
-}
-
-static void sim800_callback(void *unused)
-{
 }
 
 bool sim800_send_cmd(const char *cmd, const char *rsp)
@@ -268,7 +298,7 @@ bool sim800_connect(const char *host, uint32_t port)
         if(ret == TRUE) {
             while(!rb_is_empty(&mRb)) {
                 rb_get(&mRb, &recv, 1);
-                logi("RECV %02x", recv);
+                //logi("RECV %02x", recv);
                 rx_buf[index ++] = recv;
             }
             sim800_unlock();

@@ -27,10 +27,8 @@ void led0_task(void *p_arg)
     CanRxMsg *rxMsg;
 
     p_arg = p_arg;
-    //sim800_setup();
-    flexcan_init(CAN_500K);
-    flexcan_filter(0x7e8, 0x7e8, 0x7ff, 0x7ff);
-    //flexcan_filter(0x00, 0x00, 0x00, 0x00);
+    vehicles_init();
+    transmit_init();
     while(1)
     {
         OSTimeDlyHMSM(0,0,0,100,OS_OPT_TIME_HMSM_STRICT,&err); //—” ±200ms

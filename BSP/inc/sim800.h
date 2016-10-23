@@ -34,24 +34,28 @@ enum StatusType {
     STATE_DATA_BUSY,
 };
 
+extern struct rb mRb;
+//extern OS_SEM mWait;
+
 //public:
 bool sim800_setup(void);
 void sim800_powerup(void);
 void sim800_powerdown(void);
+bool sim800_is_connected(void);
+void sim800_send(uint8_t *buf, uint32_t len);
+uint8_t sim800_get_signal(void);
 
 //private:
 void sim800_delay(uint8_t s);
 void sim800_delay_ms(uint16_t s);
 bool sim800_send_cmd(const char *cmd, const char *rsp);
 bool sim800_connect(const char *host, uint32_t port);
-void sim800_send(uint8_t *buf, uint32_t len);
 void sim800_init(void);
 void sim800_write(uint8_t *buf, uint16_t size);
 void sim800_lock(void);
 void sim800_unlock(void);
 bool sim800_down(uint16_t sec);
 void sim800_up(void);
-void sim800_register_recv(RecvFunc func);
-uint8_t sim800_get_signal(void);
+//void sim800_register_recv(RecvFunc func);
 
 #endif

@@ -37,6 +37,7 @@ void start_task(void *p_arg)
 #endif
 
     OS_CRITICAL_ENTER();	//进入临界区
+#if 1
     OSTaskCreate((OS_TCB 	* )&Led0TaskTCB,		
             (CPU_CHAR	* )"led0 task", 		
             (OS_TASK_PTR )led0_task, 			
@@ -50,7 +51,7 @@ void start_task(void *p_arg)
             (void   	* )0,					
             (OS_OPT      )OS_OPT_TASK_STK_CHK|OS_OPT_TASK_STK_CLR,
             (OS_ERR 	* )&err);				
-#if 1
+#endif
     //watchdog thread
     OSTaskCreate((OS_TCB 	* )&WdgTaskTCB,		
             (CPU_CHAR	* )"wdg task", 		
@@ -65,8 +66,6 @@ void start_task(void *p_arg)
             (void   	* )0,					
             (OS_OPT      )OS_OPT_TASK_STK_CHK|OS_OPT_TASK_STK_CLR,
             (OS_ERR 	* )&err);				
-#endif
-    vehicles_init();
     OS_TaskSuspend((OS_TCB*)&StartTaskTCB,&err);		//挂起开始任务			
 
     OS_CRITICAL_EXIT();	//进入临界区

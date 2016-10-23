@@ -69,8 +69,6 @@ void flexcan_init(u8 velocity)
     BSP_IntVectSet(BSP_INT_ID_CAN1_RX0, (CPU_FNCT_VOID)flexcan_recv);
     BSP_IntPrioSet(BSP_INT_ID_CAN1_RX0, 1);
     BSP_IntEn(BSP_INT_ID_CAN1_RX0);
-
-    logi("%s: done", __func__);
 }
 
 void flexcan_gpio_init(void)

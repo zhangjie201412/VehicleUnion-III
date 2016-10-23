@@ -110,7 +110,7 @@ typedef struct {
 typedef struct {
     uint8_t pid;
     char key[NAME_MAX_SIZE];
-    uint8_t interval;
+    uint16_t interval;
 } PidItem;
 
 typedef struct {

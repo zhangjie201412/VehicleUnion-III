@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_proj.xsd">
 
-  <SchemaVersion>1.1</SchemaVersion>
+  <SchemaVersion>1.0</SchemaVersion>
 
   <Header>### uVision Project, (C) Keil Software</Header>
 
@@ -29,7 +29,6 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile></SFDFile>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
           <IncludePath></IncludePath>
@@ -61,8 +60,6 @@
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
-            <nStopU1X>0</nStopU1X>
-            <nStopU2X>0</nStopU2X>
           </BeforeCompile>
           <BeforeMake>
             <RunUserProg1>0</RunUserProg1>
@@ -136,7 +133,6 @@
             <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
             <RestoreFunctions>0</RestoreFunctions>
             <RestoreToolbox>1</RestoreToolbox>
-            <RestoreTracepoints>0</RestoreTracepoints>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
           <TargetSelection>7</TargetSelection>
@@ -345,12 +341,11 @@
             <Rwpi>0</Rwpi>
             <wLevel>0</wLevel>
             <uThumb>0</uThumb>
-            <uSurpInc>0</uSurpInc>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER, STM32F10X_HD</Define>
               <Undefine></Undefine>
-              <IncludePath>..\BSP;..\CORE;..\STM32F10x_FWLib\inc;..\USER;..\UCOSIII\uC-CPU;..\UCOSIII\uC-CPU\ARM-Cortex-M3\RealView;..\UCOSIII\uC-LIB;..\UCOSIII\uC-LIB\Ports\ARM-Cortex-M3\RealView;..\UCOSIII\uCOS-III;..\UCOSIII\uCOS-III\Ports;..\UCOSIII\uCOS-III\Ports\ARM-Cortex-M3\Generic\RealView;..\UCOSIII\uCOS-III\Source;..\UCOSIII\UCOS_BSP;..\UCOSIII\uCOS_CONFIG;..\UCOSIII-Task;..\SYSTEM;..\BSP\inc</IncludePath>
+              <IncludePath>..\BSP;..\CORE;..\STM32F10x_FWLib\inc;..\USER;..\UCOSIII\uC-CPU;..\UCOSIII\uC-CPU\ARM-Cortex-M3\RealView;..\UCOSIII\uC-LIB;..\UCOSIII\uC-LIB\Ports\ARM-Cortex-M3\RealView;..\UCOSIII\uCOS-III;..\UCOSIII\uCOS-III\Ports;..\UCOSIII\uCOS-III\Ports\ARM-Cortex-M3\Generic\RealView;..\UCOSIII\uCOS-III\Source;..\UCOSIII\UCOS_BSP;..\UCOSIII\uCOS_CONFIG;..\UCOSIII-Task;..\SYSTEM;..\BSP\inc;..\PAL;..\PAL\vehicles</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -361,7 +356,6 @@
             <SplitLS>0</SplitLS>
             <SwStkChk>0</SwStkChk>
             <NoWarn>0</NoWarn>
-            <uSurpInc>0</uSurpInc>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -425,6 +419,11 @@
               <FileName>wdg.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\BSP\src\wdg.c</FilePath>
+            </File>
+            <File>
+              <FileName>flexcan.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSP\src\flexcan.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -816,6 +815,11 @@
               <FileType>1</FileType>
               <FilePath>..\UCOSIII-Task\led_task.c</FilePath>
             </File>
+            <File>
+              <FileName>wdg_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\UCOSIII-Task\wdg_task.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -825,6 +829,26 @@
               <FileName>delay.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\SYSTEM\delay.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>PAL</GroupName>
+          <Files>
+            <File>
+              <FileName>pal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PAL\pal.c</FilePath>
+            </File>
+            <File>
+              <FileName>vehicles.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PAL\vehicles\vehicles.c</FilePath>
+            </File>
+            <File>
+              <FileName>transmit.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PAL\transmit.c</FilePath>
             </File>
           </Files>
         </Group>
