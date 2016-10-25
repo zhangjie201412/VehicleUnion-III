@@ -918,11 +918,10 @@ void toyota_map_support_list(void)
     uint8_t len;
     uint16_t index = 0;
 
-    logi("%s: start\r\n", __func__);
-
-    for(i = 0; i < 300; i++) {
-        printf("%02x ", toyota_support_buffer[i]);
-    }
+//    logi("%s: start\r\n", __func__);
+//    for(i = 0; i < 300; i++) {
+//        printf("%02x ", toyota_support_buffer[i]);
+//    }
     printf("\r\n");
     mToyotaSupportList.support_done = TRUE;
     for(i = 0; i < SUPPORT_MAX_ITEMS; i++) {
@@ -942,7 +941,7 @@ void toyota_map_support_list(void)
             break;
         }
     }
-    logi("%s: done\r\n", __func__);
+//    logi("%s: done\r\n", __func__);
 #if 0
     for(i = 0; i < SUPPORT_MAX_ITEMS; i++) {
         len = mToyotaSupportList.items[i].len;
@@ -997,6 +996,10 @@ uint8_t* toyota_data_stream(uint8_t pid, uint8_t *len)
         return NULL;
     }
 
+    if(mToyotaSupportList.support_done == FALSE) {
+        toyota_get_supported();
+    }
+
     //printf("pid: %s\r\n", getPidKey(pid));
     //clear flexcan rx buf
     //OSTimeDlyHMSM(0, 0, 0, 100);
@@ -1008,7 +1011,7 @@ uint8_t* toyota_data_stream(uint8_t pid, uint8_t *len)
     if(mToyotaSupportList.support_done == TRUE) {
         if(toyotaStdDs[pid].rxId == 0x7e8) {
             offset = offset - get_real_offset(toyotaStdDs[pid].data[2], offset);
-            logi("real offset = %d\r\n", offset);
+            //logi("real offset = %d\r\n", offset);
         }
     }
 
@@ -1101,11 +1104,11 @@ uint8_t* toyota_data_stream(uint8_t pid, uint8_t *len)
             }
         }
         *len = valid_len;
-        logi("offset = %d, len = %d\r\n", offset, *len);
-        for(i = 0; i < 40; i++) {
-            printf("%02x ", toyota_rx_buf[i]);
-        }
-        printf("\r\n");
+        //logi("offset = %d, len = %d\r\n", offset, *len);
+        //for(i = 0; i < 40; i++) {
+        //    printf("%02x ", toyota_rx_buf[i]);
+        //}
+        //printf("\r\n");
         return toyota_rx_buf + offset + 2;
     } else {
         return NULL;
