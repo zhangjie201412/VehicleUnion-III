@@ -38,10 +38,11 @@ extern struct rb mRb;
 //extern OS_SEM mWait;
 
 //public:
-bool sim800_setup(void);
+bool sim800_setup(bool reboot);
 void sim800_powerup(void);
 void sim800_powerdown(void);
 bool sim800_is_connected(void);
+void sim800_set_connected(bool connected);
 void sim800_send(uint8_t *buf, uint32_t len);
 uint8_t sim800_get_signal(void);
 

@@ -887,6 +887,7 @@ void gm_setup(Vehicles *vehicle)
 
     vehicle->ctrlOps = &gm_ctrl_ops;
     vehicle->dataOps = &gm_data_ops;
+    vehicle->init = TRUE;
 }
 
 bool gm_engine_on(void)

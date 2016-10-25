@@ -47,6 +47,11 @@ bool sim800_is_connected(void)
     return mIsConnected;
 }
 
+void sim800_set_connected(bool connected)
+{
+    mIsConnected = connected;
+}
+
 void sim800_delay(uint8_t s)
 {
     OS_ERR err;
@@ -113,7 +118,7 @@ void sim800_powerdown(void)
     sim800_powerup();
 }
 
-bool sim800_setup(void)
+bool sim800_setup(bool reboot)
 {
     bool ret;
     OS_ERR err;
@@ -122,38 +127,34 @@ bool sim800_setup(void)
     uint8_t i;
 
     retry = 0;
-    //init for ucos
-    OSSemCreate(
-            (OS_SEM *) &mWait,
-            (CPU_CHAR *)"SIM800_WAIT",
-            (OS_SEM_CTR)0,
-            (OS_ERR *)&err
-            );
-    OSMutexCreate(
-            (OS_MUTEX *)&mMutex,
-            (CPU_CHAR *)"SIM800_MUTEX",
-            &err
-            );
-    OSMutexCreate(
-            (OS_MUTEX *)&mSendMutex,
-            (CPU_CHAR *)"SIM800_SEND_MUTEX",
-            &err
-            );
+    if(!reboot) {
+        //init for ucos
+        OSSemCreate(
+                (OS_SEM *) &mWait,
+                (CPU_CHAR *)"SIM800_WAIT",
+                (OS_SEM_CTR)0,
+                (OS_ERR *)&err
+                );
+        OSMutexCreate(
+                (OS_MUTEX *)&mMutex,
+                (CPU_CHAR *)"SIM800_MUTEX",
+                &err
+                );
+        OSMutexCreate(
+                (OS_MUTEX *)&mSendMutex,
+                (CPU_CHAR *)"SIM800_SEND_MUTEX",
+                &err
+                );
+    }
 
     mIsConnected  = FALSE;
     while(!connect_done) {
         switch(mState) {
             case STATE_UNINITED:
                 logi("%s: STATE_UNINITED", __func__);
-                sim800_reset();
+                //                sim800_reset();
                 sim800_powerup();
                 sim800_delay(10);
-
-                sim800_write("ATE1\r\n", 6);
-                sim800_delay(2);
-                sim800_write("ATE1\r\n", 6);
-                sim800_delay(2);
-                while(1);
 
                 mState = STATE_POWERUP;
                 if(sim800_send_cmd("AT\r\n", "AT") == TRUE) {
@@ -229,7 +230,7 @@ void sim800_recv(void)
 
     if(USART_GetITStatus(USART3, USART_IT_RXNE) != RESET) {
         data =USART_ReceiveData(USART3);
-        printf("%c", data);
+        //        printf("%c", data);
         buf[0] = buf[1];
         buf[1] = buf[2];
         buf[2] = buf[3];
@@ -274,6 +275,7 @@ void sim800_recv(void)
                     //TO FIX
                     OSTaskSemPost(&TransmitCallbackTaskTCB,
                             OS_OPT_POST_NONE, &err);
+                    //                    logi("#####post task sem");
                 } else {
                     if(json_start) {
                         rb_put(&mRb, &data, 1);

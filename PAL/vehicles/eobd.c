@@ -268,6 +268,7 @@ void eobd_setup(Vehicles *vehicle)
 
     vehicle->ctrlOps = &eobd_ctrl_ops;
     vehicle->dataOps = &eobd_data_ops;
+    vehicle->init = TRUE;
 }
 
 void eobd_ctrl_window(uint8_t state)
@@ -337,6 +338,8 @@ uint8_t* eobd_data_stream(uint8_t pid, uint8_t *len)
         return NULL;
     }
 
+    logi("%s: pid = %d", __func__, pid);
+    xdelay(2);
     valid_len = eobdStdDs[pid].valid_len;
     offset = eobdStdDs[pid].offset;
     txMsg.StdId = eobdStdDs[pid].txId;

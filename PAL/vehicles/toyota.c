@@ -705,6 +705,7 @@ void toyota_setup(Vehicles *vehicle)
     for(i = 0; i < 1280; i++) {
         toyota_support_buffer[i] = 0x00;
     }
+    vehicle->init = TRUE;
 }
 
 bool toyota_engine_on(void)

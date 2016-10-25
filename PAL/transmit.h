@@ -29,5 +29,8 @@ extern OS_TCB TransmitCallbackTaskTCB;
 
 void transmit_init(void);
 void transmit_control_rsp(uint32_t cmd_id, uint8_t id);
+void transmit_lock(void);
+void transmit_unlock(void);
+void transmit_reconnect(void);
 
 #endif

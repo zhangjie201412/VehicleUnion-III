@@ -6,7 +6,8 @@
 #include "pal.h"
 #include "vehicles.h"
 
-#define HEARTBEAT_INTERVAL      15
+#define HEARTBEAT_INTERVAL              15
+#define HEARTBEAT_RSP_TIMEOUT              15
 
 #define ENG_INTERVAL                    50
 #define AT_INTERVAL                     60
@@ -21,6 +22,8 @@ CPU_STK HEARTBEAT_TASK_STK[HEARTBEAT_STK_SIZE];
 //upload thread
 OS_TCB UploadTaskTCB;
 CPU_STK UPLOAD_TASK_STK[UPLOAD_STK_SIZE];
+
+OS_MUTEX mTransmitMutex;
 
 uint8_t heartbeat_count = 0;
 
@@ -129,7 +132,9 @@ void transmit_callback_task(void *unused)
                 case MSG_TYPE_HEARTBEAT_RSP:
                     heartbeat_rsp = json_get_heartbeat(json);
                     if(((heartbeat_count - 1) * 2 + 1) == heartbeat_rsp) {
-                        logi("heartbeat!!");
+                        //post heart pend
+                        OSTaskSemPost(&HeartbeatTaskTCB,
+                                OS_OPT_POST_NONE, &err);
                     } else {
                         loge("failed to get heartbeat response");
                     }
@@ -182,11 +187,34 @@ void heartbeat_task(void *unused)
                 0, OS_OPT_TIME_HMSM_STRICT, &err);
         heartbeat_count = (heartbeat_count == 100) ? 0 : heartbeat_count;
         if(is_connected()){
+            transmit_lock();
             heartbeat(heartbeat_count++);
+            transmit_unlock();
+            //wait for heartbeat rsp
+            OSTaskSemPend(
+                    OS_CFG_TICK_RATE_HZ * HEARTBEAT_RSP_TIMEOUT,
+                    OS_OPT_PEND_BLOCKING,
+                    0,
+                    &err
+                    );
+            if(err == OS_ERR_TIMEOUT) {
+                loge("##wait for heartbeat timeout");
+                loge("##need to re-connect to server");
+                //transmit_reconnect();
+            } else {
+                logi("get heart beat rsp!");
+            }
         } else {
             loge("gprs is not connect to server");
         }
     }
+}
+
+void transmit_reconnect(void)
+{
+    sim800_set_connected(FALSE);
+    sim800_powerdown();
+    sim800_setup(TRUE);
 }
 
 void upload_task(void *unused)
@@ -207,7 +235,9 @@ void upload_task(void *unused)
                 mUpdateList[i].pid = i;
                 logi("upload %d", i);
                 //upload the pid data
+                transmit_lock();
                 upload_item(&mUpdateList[i], pidList[i].key);
+                transmit_unlock();
                 mUpdateList[i].updated = FALSE;
                 mUpdateList[i].spend_time = 0;
             }
@@ -218,6 +248,12 @@ void upload_task(void *unused)
 void transmit_init(void)
 {
     OS_ERR err;
+
+    OSMutexCreate(
+            (OS_MUTEX *)&mTransmitMutex,
+            (CPU_CHAR *)"TRANSMIT_MUTEX",
+            &err
+            );
 
     OSTaskCreate((OS_TCB 	* )&TransmitCallbackTaskTCB,
             (CPU_CHAR	* )"transmit callback task",
@@ -260,11 +296,30 @@ void transmit_init(void)
             (void   	* )0,
             (OS_OPT      )OS_OPT_TASK_STK_CHK|OS_OPT_TASK_STK_CLR,
             (OS_ERR 	* )&err);
-    sim800_setup();
+    sim800_setup(FALSE);
     heartbeat_count = 0;
 }
 
 void transmit_control_rsp(uint32_t cmd_id, uint8_t id)
 {
+    transmit_lock();
     control_rsp(cmd_id, id, ctrlTable[id].key);
+    transmit_unlock();
 }
+
+void transmit_lock(void)
+{
+    OS_ERR err;
+
+    logi("+++%s+++", __func__);
+    OSMutexPend(&mTransmitMutex, 0, OS_OPT_PEND_BLOCKING, 0, &err);
+}
+
+void transmit_unlock(void)
+{
+    OS_ERR err;
+
+    logi("---%s---", __func__);
+    OSMutexPost(&mTransmitMutex, OS_OPT_POST_NONE, &err);
+}
+
