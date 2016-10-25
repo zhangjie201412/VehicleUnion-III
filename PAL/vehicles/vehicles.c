@@ -48,6 +48,8 @@ void vehicles_task(void *unused)
             //engine off
             //logi("engine off");
         }
+
+        xdelay(4);
         for(i = 0; i < PID_SIZE; i++) {
             if(mVehicles.dataOps->transfer_data_stream == NULL) {
                 loge("transfer data stream function is null");
