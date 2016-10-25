@@ -59,10 +59,41 @@ void sim800_delay_ms(uint16_t s)
     OSTimeDlyHMSM(0, 0, 0, s, OS_OPT_TIME_HMSM_STRICT, &err);
 }
 
+void sim800_reset(void)
+{
+    GPIO_InitTypeDef GPIO_InitStructure;
+
+    logi("%s", __func__);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+#if 1
+    GPIO_SetBits(GPIOC, GPIO_Pin_15);
+    sim800_delay(2);
+    GPIO_ResetBits(GPIOC, GPIO_Pin_15);
+    sim800_delay_ms(200);
+    GPIO_SetBits(GPIOC, GPIO_Pin_15);
+    sim800_delay(2);
+#endif
+#if 0
+    GPIO_ResetBits(GPIOC, GPIO_Pin_15);
+    sim800_delay(2);
+    GPIO_SetBits(GPIOC, GPIO_Pin_15);
+    sim800_delay_ms(500);
+    GPIO_ResetBits(GPIOC, GPIO_Pin_15);
+    sim800_delay(2);
+#endif
+}
+
 void sim800_powerup(void)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
 
+    logi("%s", __func__);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
@@ -114,8 +145,16 @@ bool sim800_setup(void)
         switch(mState) {
             case STATE_UNINITED:
                 logi("%s: STATE_UNINITED", __func__);
+                sim800_reset();
                 sim800_powerup();
                 sim800_delay(10);
+
+                sim800_write("ATE1\r\n", 6);
+                sim800_delay(2);
+                sim800_write("ATE1\r\n", 6);
+                sim800_delay(2);
+                while(1);
+
                 mState = STATE_POWERUP;
                 if(sim800_send_cmd("AT\r\n", "AT") == TRUE) {
                     mState = STATE_INITED;
@@ -190,7 +229,7 @@ void sim800_recv(void)
 
     if(USART_GetITStatus(USART3, USART_IT_RXNE) != RESET) {
         data =USART_ReceiveData(USART3);
-//        printf("%c", data);
+        printf("%c", data);
         buf[0] = buf[1];
         buf[1] = buf[2];
         buf[2] = buf[3];
@@ -428,6 +467,7 @@ void sim800_init(void)
     BSP_IntVectSet(BSP_INT_ID_USART3, (CPU_FNCT_VOID)sim800_recv);
     BSP_IntPrioSet(BSP_INT_ID_USART3, 1);
     BSP_IntEn(BSP_INT_ID_USART3);
+    logi("%s", __func__);
 }
 
 void sim800_write(uint8_t *buf, uint16_t size)

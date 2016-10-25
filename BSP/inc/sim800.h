@@ -56,6 +56,7 @@ void sim800_lock(void);
 void sim800_unlock(void);
 bool sim800_down(uint16_t sec);
 void sim800_up(void);
+void sim800_reset(void);
 //void sim800_register_recv(RecvFunc func);
 
 #endif
