@@ -3,6 +3,7 @@
 #include "flash.h"
 #include "stdio.h"
 #include "sim800.h"
+#include "config.h"
 
 uint8_t DEBUG_MODE = LOG_ERROR | LOG_INFO;
 uint8_t deviceid[17];
@@ -106,6 +107,23 @@ uint8_t json_get_heartbeat(cJSON *json)
     } else {
         return 0;
     }
+}
+
+void login(void)
+{
+    cJSON *root = cJSON_CreateObject();
+    char *out;
+    uint16_t length;
+
+    get_deviceid();
+    cJSON_AddStringToObject(root, KEY_DEVICE_ID, (const char *)deviceid);
+    cJSON_AddNumberToObject(root, KEY_MSG_TYPE, MSG_TYPE_LOGIN);
+
+    out = cJSON_Print(root);
+    length = strlen(out);
+    sim800_send((uint8_t *)out, length);
+    cJSON_Delete(root);
+    free(out);
 }
 
 void xdelay(uint8_t s)

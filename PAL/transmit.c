@@ -5,9 +5,14 @@
 #include "ringbuffer.h"
 #include "pal.h"
 #include "vehicles.h"
+#include "config.h"
+#include "sys.h"
 
 #define HEARTBEAT_INTERVAL              15
 #define HEARTBEAT_RSP_TIMEOUT              15
+#define LOGIN_RSP_TIMEOUT              10
+
+#define HEARTBEAT_FAIL_TOLERENT         3
 
 #define ENG_INTERVAL                    50
 #define AT_INTERVAL                     60
@@ -26,6 +31,7 @@ CPU_STK UPLOAD_TASK_STK[UPLOAD_STK_SIZE];
 OS_MUTEX mTransmitMutex;
 
 uint8_t heartbeat_count = 0;
+uint8_t heartbeat_fail_times = 0;
 
 CtrlItem ctrlTable[CONTROL_END] = {
     {CONTROL_WINDOW, "bcm_fun_window"},
@@ -39,7 +45,7 @@ CtrlItem ctrlTable[CONTROL_END] = {
 
 PidItem pidList[PID_SIZE] =
 {
-    
+
     {ENG_DATA_RPM, "eng_data_rpm", ENG_INTERVAL},
     {ENG_DATA_VS, "eng_data_vs", ENG_INTERVAL},
     {ENG_DATA_ECT, "eng_data_ect", ENG_INTERVAL},
@@ -109,6 +115,7 @@ void transmit_callback_task(void *unused)
     uint8_t msg_type;
     uint8_t heartbeat_rsp;
     CtrlMsg ctrlMsg;
+    int cmd_id, ctrl_val;
     char *tmp;
 
     memset(&ctrlMsg, 0x00, sizeof(ctrlMsg));
@@ -140,11 +147,22 @@ void transmit_callback_task(void *unused)
                     }
                     break;
                 case MSG_TYPE_CTRL:
+#ifdef SERVER_IS_K
+                    item = cJSON_GetObjectItem(json, KEY_CMD_ID);
+                    cmd_id = item->valueint;
+#endif
+
                     for(i = 0; i < CONTROL_END; i++) {
                         tmp = strstr((char *)buf, ctrlTable[i].key);
                         if(tmp) {
                             item = cJSON_GetObjectItem(json,
                                     ctrlTable[i].key);
+#ifdef SERVER_IS_K
+                            ctrl_val = item->valueint;
+                            ctrlMsg.id = i;
+                            ctrlMsg.cmd_id = cmd_id;
+                            ctrlMsg.value = ctrl_val;
+#elif defined SERVER_IS_VEHICLE_UNION
                             ctrlMsg.id = i;
                             ctrlMsg.cmd_id = 0;
                             if(!strcmp(item->valuestring, "ON")) {
@@ -152,6 +170,7 @@ void transmit_callback_task(void *unused)
                             } else if(!strcmp(item->valuestring, "OFF")) {
                                 ctrlMsg.value = 0;
                             }
+#endif
                             logi("ctrl value = %d", ctrlMsg.value);
                             //post msg to vehicle control thread
                             OSTaskQPost(
@@ -168,6 +187,20 @@ void transmit_callback_task(void *unused)
                     vehicle_clear_code();
                     break;
                 case MSG_TYPE_VEHICLE_TYPE:
+                    item = cJSON_GetObjectItem(json, KEY_VEHICLE_TYPE);
+                    if(!strcmp(item->valuestring, "toyota")) {
+                        logi("##TOYOTA##");
+                        vehicle_setup(VEHICLE_TOYOTA);
+                    } else if(!strcmp(item->valuestring, "gm")) {
+                        logi("##GM##");
+                        vehicle_setup(VEHICLE_GM);
+                    } else {
+                        logi("##EOBD##");
+                        vehicle_setup(VEHICLE_EOBD);
+                    }
+                    //post heart pend
+                    OSTaskSemPost(&HeartbeatTaskTCB,
+                            OS_OPT_POST_NONE, &err);
                     break;
                 default:
                     break;
@@ -181,6 +214,32 @@ void transmit_callback_task(void *unused)
 void heartbeat_task(void *unused)
 {
     OS_ERR err;
+    uint8_t retry = 0;
+
+#ifdef SERVER_IS_K
+    while(!is_connected())
+        xdelay(2);
+login:
+    login();
+    //wait for login rsp
+    OSTaskSemPend(
+            OS_CFG_TICK_RATE_HZ * LOGIN_RSP_TIMEOUT,
+            OS_OPT_PEND_BLOCKING,
+            0,
+            &err
+            );
+    if(err == OS_ERR_TIMEOUT) {
+        loge("##wait for login timeout");
+        loge("##retry##");
+        if(++retry > 10) {
+            //goto reboot
+            loge("##retry 10 times##");
+        }
+        goto login;
+    } else {
+        logi("get login rsp!");
+    }
+#endif
 
     while(1) {
         OSTimeDlyHMSM(0, 0, HEARTBEAT_INTERVAL,
@@ -200,7 +259,10 @@ void heartbeat_task(void *unused)
             if(err == OS_ERR_TIMEOUT) {
                 loge("##wait for heartbeat timeout");
                 loge("##need to re-connect to server");
-                //transmit_reconnect();
+                if(++heartbeat_fail_times > HEARTBEAT_FAIL_TOLERENT) {
+                    //transmit_reconnect();
+                    SystemReset();
+                }
             } else {
                 logi("get heart beat rsp!");
             }

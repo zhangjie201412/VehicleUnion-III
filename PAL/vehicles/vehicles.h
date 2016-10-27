@@ -11,6 +11,12 @@
 #define CONTROL_TASK_PRIO		27u
 #define CONTROL_STK_SIZE 		256u
 
+typedef enum {
+    VEHICLE_TOYOTA,
+    VEHICLE_GM,
+    VEHICLE_EOBD,
+} VehicleType;
+
 typedef struct {
     void (*control_window)(uint8_t state);
     void (*control_door)(uint8_t state);
@@ -37,6 +43,7 @@ extern OS_TCB ControlTaskTCB;
 extern UpdateItem mUpdateList[PID_SIZE];
 
 void vehicles_init(void);
+void vehicle_setup(uint8_t type);
 void vehicles_task(void *unused);
 void control_task(void *unused);
 bool vehicle_engine_on(void);

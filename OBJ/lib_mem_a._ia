@@ -1,0 +1,1 @@
+--cpu Cortex-M3 -g --apcs=interwork --pd "__MICROLIB SETA 1" -I "E:\Keil\ARM\INC" -I "E:\Keil\ARM\INC\ST\STM32F10x" --list ".\List\lib_mem_a.lst" --xref -o "..\OBJ\lib_mem_a.o" --depend "..\OBJ\lib_mem_a.d" "..\UCOSIII\uC-LIB\Ports\ARM-Cortex-M3\RealView\lib_mem_a.asm"

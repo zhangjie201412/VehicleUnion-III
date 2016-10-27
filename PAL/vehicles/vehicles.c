@@ -5,6 +5,7 @@
 #include "transmit.h"
 #include "flexcan.h"
 #include "eobd.h"
+#include "gm.h"
 #include "toyota.h"
 #include "config.h"
 
@@ -176,7 +177,7 @@ void vehicles_init(void)
     flexcan_init(CAN_500K);
     mVehicles.init = FALSE;
 #ifdef SERVER_IS_VEHICLE_UNION
-#ifdef VEHICLE_TYPE_FAKE
+#ifdef VEHICLE_TYPE_EOBD
     eobd_setup(&mVehicles);
 #elif defined VEHICLE_TYPE_TOYOTA
     toyota_setup(&mVehicles);
@@ -184,6 +185,17 @@ void vehicles_init(void)
     gm_setup(&mVehicles);
 #endif
 #endif
+}
+
+void vehicle_setup(uint8_t type)
+{
+    if(type == VEHICLE_TOYOTA) {
+        toyota_setup(&mVehicles);
+    } else if(type == VEHICLE_GM) {
+        gm_setup(&mVehicles);
+    } else if(type == VEHICLE_EOBD) {
+        eobd_setup(&mVehicles);
+    }
 }
 
 bool vehicle_engine_on(void)

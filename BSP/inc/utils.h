@@ -21,8 +21,8 @@ enum {
         OS_ERR err;                                        \
         uint32_t ticks = OSTimeGet(&err);                  \
         if(DEBUG_MODE & LOG_INFO)                          \
-        printf("[%04d.%02d/I]: " fmt "\r\n",           \
-                ticks / 200, ticks / 2 % 100,          \
+        printf("[%05d.%03d/I]: " fmt "\r\n",           \
+                ticks / 5000, ticks % 5000 / 5,          \
 ##__VA_ARGS__);                        \
     } while(0)
 
@@ -31,8 +31,8 @@ enum {
         OS_ERR err;                                        \
         uint32_t ticks = OSTimeGet(&err);                  \
         if(DEBUG_MODE & LOG_WARN)                          \
-        printf("[%04d.%02d/W]: " fmt "\r\n",           \
-                ticks / 200, ticks / 2 % 100,          \
+        printf("[%05d.%03d/W]: " fmt "\r\n",           \
+                ticks / 5000, ticks % 5000 / 5,          \
 ##__VA_ARGS__);                        \
     } while(0)
 
@@ -41,8 +41,8 @@ enum {
         OS_ERR err;                                        \
         uint32_t ticks = OSTimeGet(&err);                  \
         if(DEBUG_MODE & LOG_DEBUG)                         \
-        printf("[%04d.%02d/D]: " fmt "\r\n",           \
-                ticks / 200, ticks / 2 % 100,          \
+        printf("[%05d.%03d/D]: " fmt "\r\n",           \
+                ticks / 5000, ticks % 5000 / 5,          \
 ##__VA_ARGS__);                        \
     } while(0)
 
@@ -51,8 +51,8 @@ enum {
         OS_ERR err;                                        \
         uint32_t ticks = OSTimeGet(&err);                  \
         if(DEBUG_MODE & LOG_ERROR)                         \
-        printf("[%04d.%02d/E]: " fmt "\r\n",           \
-                ticks / 200, ticks / 2 % 100,          \
+        printf("[%05d.%03d/E]: " fmt "\r\n",           \
+                ticks / 5000, ticks % 5000 / 5,          \
 ##__VA_ARGS__);                        \
     } while(0)
 
@@ -126,6 +126,7 @@ void upload_item(UpdateItem *item, char *key);
 void get_deviceid(void);
 uint8_t json_get_msg_type(cJSON *json);
 uint8_t json_get_heartbeat(cJSON *json);
+void login(void);
 
 void xdelay(uint8_t s);
 void xdelay_ms(uint16_t s);
