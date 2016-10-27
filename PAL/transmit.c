@@ -7,9 +7,10 @@
 #include "vehicles.h"
 #include "config.h"
 #include "sys.h"
+#include "wdg_task.h"
 
-#define HEARTBEAT_INTERVAL              15
-#define HEARTBEAT_RSP_TIMEOUT              15
+#define HEARTBEAT_INTERVAL              10
+#define HEARTBEAT_RSP_TIMEOUT              8
 #define LOGIN_RSP_TIMEOUT              10
 
 #define HEARTBEAT_FAIL_TOLERENT         3
@@ -214,38 +215,44 @@ void transmit_callback_task(void *unused)
 void heartbeat_task(void *unused)
 {
     OS_ERR err;
-    uint8_t retry = 0;
-
-#ifdef SERVER_IS_K
-    while(!is_connected())
-        xdelay(2);
-login:
-    login();
-    //wait for login rsp
-    OSTaskSemPend(
-            OS_CFG_TICK_RATE_HZ * LOGIN_RSP_TIMEOUT,
-            OS_OPT_PEND_BLOCKING,
-            0,
-            &err
-            );
-    if(err == OS_ERR_TIMEOUT) {
-        loge("##wait for login timeout");
-        loge("##retry##");
-        if(++retry > 10) {
-            //goto reboot
-            loge("##retry 10 times##");
-        }
-        goto login;
-    } else {
-        logi("get login rsp!");
-    }
-#endif
+    static bool logined = FALSE;
 
     while(1) {
+        //set the wdg feed flag
+        OSFlagPost(
+                (OS_FLAG_GRP *)&FLAG_TaskRunStatus,
+                (OS_FLAGS)FLAG_HEARTBEAT,
+                (OS_OPT)OS_OPT_POST_FLAG_SET,
+                (OS_ERR *)&err
+                );
+#ifdef SERVER_IS_K
+        if(!is_connected()) {
+            xdelay(2);
+            continue;
+        }
+        if(!logined) {
+            login();
+            //wait for login rsp
+            OSTaskSemPend(
+                    OS_CFG_TICK_RATE_HZ * LOGIN_RSP_TIMEOUT,
+                    OS_OPT_PEND_BLOCKING,
+                    0,
+                    &err
+                    );
+            if(err == OS_ERR_TIMEOUT) {
+                loge("##wait for login timeout");
+                loge("##retry##");
+                continue;
+            } else {
+                logi("get login rsp!");
+                logined = TRUE;
+            }
+        }
+#endif
         OSTimeDlyHMSM(0, 0, HEARTBEAT_INTERVAL,
                 0, OS_OPT_TIME_HMSM_STRICT, &err);
-        heartbeat_count = (heartbeat_count == 100) ? 0 : heartbeat_count;
-        if(is_connected()){
+        if(is_connected() && logined){
+            heartbeat_count = (heartbeat_count == 100) ? 0 : heartbeat_count;
             transmit_lock();
             heartbeat(heartbeat_count++);
             transmit_unlock();
@@ -260,7 +267,9 @@ login:
                 loge("##wait for heartbeat timeout");
                 loge("##need to re-connect to server");
                 if(++heartbeat_fail_times > HEARTBEAT_FAIL_TOLERENT) {
+                    heartbeat_fail_times = 0;
                     //transmit_reconnect();
+                    //temp solution
                     SystemReset();
                 }
             } else {
@@ -285,6 +294,13 @@ void upload_task(void *unused)
     uint8_t i;
 
     while(1) {
+        //set the wdg feed flag
+        OSFlagPost(
+                (OS_FLAG_GRP *)&FLAG_TaskRunStatus,
+                (OS_FLAGS)FLAG_UPLOAD,
+                (OS_OPT)OS_OPT_POST_FLAG_SET,
+                (OS_ERR *)&err
+                );
         OSTimeDlyHMSM(0, 0, 1,
                 0, OS_OPT_TIME_HMSM_STRICT, &err);
         if(!is_connected())

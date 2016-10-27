@@ -2,6 +2,7 @@
 #define __WDG_H__
 
 #include "stm32f10x.h"
+#include "includes.h"
 
 void iwdg_init(uint8_t prep, uint16_t rlr);
 void iwdg_feed(void);

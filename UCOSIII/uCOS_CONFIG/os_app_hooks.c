@@ -33,6 +33,7 @@
 #define  MICRIUM_SOURCE
 #include <os.h>
 #include <os_app_hooks.h>
+#include "bsp.h"
 
 /*$PAGE*/
 /*
@@ -169,7 +170,8 @@ void  App_OS_TaskReturnHook (OS_TCB  *p_tcb)
 
 void  App_OS_IdleTaskHook (void)
 {
-
+    //enter sleep mode
+    __WFI();
 }
 
 /*$PAGE*/

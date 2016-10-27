@@ -14,6 +14,9 @@
 #define UPLOAD_TASK_PRIO        10u
 #define UPLOAD_STK_SIZE         512u
 
+#define FLAG_HEARTBEAT          0x01
+#define FLAG_UPLOAD             0x02
+
 typedef struct {
     uint8_t id;
     char key[NAME_MAX_SIZE];
