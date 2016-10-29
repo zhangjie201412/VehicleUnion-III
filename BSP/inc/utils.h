@@ -123,6 +123,7 @@ bool is_connected(void);
 void heartbeat(uint8_t count);
 void control_rsp(uint32_t cmd_id, uint8_t cmd_type, char *key);
 void upload_item(UpdateItem *item, char *key);
+void upload_location(void);
 void get_deviceid(void);
 uint8_t json_get_msg_type(cJSON *json);
 uint8_t json_get_heartbeat(cJSON *json);

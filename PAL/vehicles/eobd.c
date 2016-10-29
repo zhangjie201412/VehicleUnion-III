@@ -338,7 +338,6 @@ uint8_t* eobd_data_stream(uint8_t pid, uint8_t *len)
         return NULL;
     }
 
-    logi("%s: pid = %d", __func__, pid);
     xdelay(2);
     valid_len = eobdStdDs[pid].valid_len;
     offset = eobdStdDs[pid].offset;
@@ -353,7 +352,9 @@ uint8_t* eobd_data_stream(uint8_t pid, uint8_t *len)
         rxMsg = flexcan_dump();
         for(i = 0; i < 8; i++) {
             eobd_rx_buf[i] = rxMsg->Data[i];
+            printf("%02x ", eobd_rx_buf[i]);
         }
+        printf("\r\n");
         *len = valid_len;
         return eobd_rx_buf + offset;
     } else {

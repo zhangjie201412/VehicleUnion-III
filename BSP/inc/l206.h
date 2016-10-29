@@ -45,6 +45,7 @@ bool l206_is_connected(void);
 void l206_set_connected(bool connected);
 void l206_send(uint8_t *buf, uint32_t len);
 uint8_t l206_get_signal(void);
+void l206_get_location(uint32_t *lng, uint32_t *lat);
 
 //private:
 void l206_delay(uint8_t s);
@@ -58,6 +59,8 @@ void l206_unlock(void);
 bool l206_down(uint16_t sec);
 void l206_up(void);
 void l206_reset(void);
+void l206_get_pos(void);
+void l206_connect_location_server(void);
 //void l206_register_recv(RecvFunc func);
 
 #endif

@@ -2,15 +2,15 @@
 #include "cJSON.h"
 #include "flash.h"
 #include "stdio.h"
-#include "sim800.h"
 #include "config.h"
+#include "l206.h"
 
 uint8_t DEBUG_MODE = LOG_ERROR | LOG_INFO;
 uint8_t deviceid[17];
 
 bool is_connected(void)
 {
-    return sim800_is_connected();
+    return l206_is_connected();
 }
 
 void heartbeat(uint8_t count)
@@ -26,7 +26,7 @@ void heartbeat(uint8_t count)
 
     out = cJSON_Print(root);
     length = strlen(out);
-    sim800_send((uint8_t *)out, length);
+    l206_send((uint8_t *)out, length);
 
     cJSON_Delete(root);
     free(out);
@@ -49,7 +49,7 @@ void control_rsp(uint32_t cmd_id, uint8_t cmd_type, char *key)
 
     out = cJSON_Print(root);
     length = strlen(out);
-    sim800_send((uint8_t *)out, length);
+    l206_send((uint8_t *)out, length);
 
     cJSON_Delete(root);
     free(out);
@@ -78,7 +78,33 @@ void upload_item(UpdateItem *item, char *key)
     //printf("%s: %s\r\n", __func__, getPidKey(item->pid));
     out = cJSON_Print(root);
     length = strlen(out);
-    sim800_send((uint8_t *)out, length);
+    l206_send((uint8_t *)out, length);
+
+    cJSON_Delete(root);
+    free(out);
+}
+
+void upload_location(void)
+{
+    cJSON *root = cJSON_CreateObject();
+    char *out;
+    uint16_t length;
+    uint32_t lng, lat;
+
+    get_deviceid();
+
+    l206_get_location(&lng, &lat);
+    if(lng == 0 || lat == 0) {
+        return;
+    }
+    cJSON_AddStringToObject(root, KEY_DEVICE_ID, (const char *)deviceid);
+    cJSON_AddNumberToObject(root, KEY_MSG_TYPE, MSG_TYPE_LOCATION);
+    cJSON_AddNumberToObject(root, KEY_LNG, lng);
+    cJSON_AddNumberToObject(root, KEY_LAT, lat);
+
+    out = cJSON_Print(root);
+    length = strlen(out);
+    l206_send((uint8_t *)out, length);
 
     cJSON_Delete(root);
     free(out);
@@ -121,7 +147,7 @@ void login(void)
 
     out = cJSON_Print(root);
     length = strlen(out);
-    sim800_send((uint8_t *)out, length);
+    l206_send((uint8_t *)out, length);
     cJSON_Delete(root);
     free(out);
 }

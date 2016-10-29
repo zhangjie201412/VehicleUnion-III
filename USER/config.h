@@ -5,7 +5,7 @@
  * To define the server receive supported modules
  * */
 
-//#define SERVER_IS_VEHICLE_UNION
+#define SERVER_IS_VEHICLE_UNION
 //#define VEHICLE_TYPE_TOYOTA
 //#define VEHICLE_TYPE_GM
 //#define VEHICLE_TYPE_EOBD

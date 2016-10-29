@@ -229,7 +229,7 @@ void vehicle_lock(void)
 {
     OS_ERR err;
 
-    logi("+++%s+++", __func__);
+//    logi("+++%s+++", __func__);
     OSMutexPend(&mVehicleMutex, 0, OS_OPT_PEND_BLOCKING, 0, &err);
 }
 
@@ -237,7 +237,7 @@ void vehicle_unlock(void)
 {
     OS_ERR err;
 
-    logi("---%s---", __func__);
+//    logi("---%s---", __func__);
     OSMutexPost(&mVehicleMutex, OS_OPT_POST_NONE, &err);
 }
 

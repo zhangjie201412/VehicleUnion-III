@@ -6,10 +6,10 @@
 #include "utils.h"
 
 #define TRANSMIT_CALLBACK_TASK_PRIO		8u
-#define TRANSMIT_CALLBACK_STK_SIZE 		512u
+#define TRANSMIT_CALLBACK_STK_SIZE 		1024u
 //heart beat thread
 #define HEARTBEAT_TASK_PRIO		16u
-#define HEARTBEAT_STK_SIZE 		512u
+#define HEARTBEAT_STK_SIZE 		1024u
 //upload thread
 #define UPLOAD_TASK_PRIO        10u
 #define UPLOAD_STK_SIZE         512u

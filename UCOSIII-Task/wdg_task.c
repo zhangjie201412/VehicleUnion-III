@@ -27,7 +27,7 @@ void wdg_task(void *unused)
 //                0, OS_OPT_TIME_HMSM_STRICT, &err);
         OSFlagPend(
                 (OS_FLAG_GRP *)&FLAG_TaskRunStatus,
-                (OS_FLAGS)(FLAG_HEARTBEAT | FLAG_UPLOAD),
+                (OS_FLAGS)(/*FLAG_HEARTBEAT |*/ FLAG_UPLOAD),
                 (OS_TICK)0,
                 (OS_OPT)OS_OPT_PEND_FLAG_SET_ALL + OS_OPT_PEND_FLAG_CONSUME,
                 (CPU_TS *)0,

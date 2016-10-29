@@ -411,11 +411,6 @@
               <FilePath>..\BSP\src\ringbuffer.c</FilePath>
             </File>
             <File>
-              <FileName>sim800.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\BSP\src\sim800.c</FilePath>
-            </File>
-            <File>
               <FileName>wdg.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\BSP\src\wdg.c</FilePath>
@@ -424,6 +419,11 @@
               <FileName>flexcan.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\BSP\src\flexcan.c</FilePath>
+            </File>
+            <File>
+              <FileName>l206.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSP\src\l206.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -829,6 +829,11 @@
               <FileName>delay.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\SYSTEM\delay.c</FilePath>
+            </File>
+            <File>
+              <FileName>sys.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SYSTEM\sys.c</FilePath>
             </File>
           </Files>
         </Group>

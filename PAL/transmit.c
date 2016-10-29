@@ -1,5 +1,5 @@
 #include "transmit.h"
-#include "sim800.h"
+#include "l206.h"
 #include "utils.h"
 #include "cJSON.h"
 #include "ringbuffer.h"
@@ -129,6 +129,7 @@ void transmit_callback_task(void *unused)
             rb_get(&mRb, &recv, 1);
             buf[index ++] = recv;
         }
+        //logi("%s: %s", __func__, buf);
         json = cJSON_Parse((const char *)buf);
         if(!json) {
             loge("[%s]", cJSON_GetErrorPtr());
@@ -248,6 +249,8 @@ void heartbeat_task(void *unused)
                 logined = TRUE;
             }
         }
+#elif defined SERVER_IS_VEHICLE_UNION
+        logined = TRUE;
 #endif
         OSTimeDlyHMSM(0, 0, HEARTBEAT_INTERVAL,
                 0, OS_OPT_TIME_HMSM_STRICT, &err);
@@ -255,7 +258,6 @@ void heartbeat_task(void *unused)
             heartbeat_count = (heartbeat_count == 100) ? 0 : heartbeat_count;
             transmit_lock();
             heartbeat(heartbeat_count++);
-            transmit_unlock();
             //wait for heartbeat rsp
             OSTaskSemPend(
                     OS_CFG_TICK_RATE_HZ * HEARTBEAT_RSP_TIMEOUT,
@@ -273,8 +275,10 @@ void heartbeat_task(void *unused)
                     SystemReset();
                 }
             } else {
-                logi("get heart beat rsp!");
+                //logi("get heart beat rsp!");
+                heartbeat_fail_times = 0;
             }
+            transmit_unlock();
         } else {
             loge("gprs is not connect to server");
         }
@@ -283,15 +287,16 @@ void heartbeat_task(void *unused)
 
 void transmit_reconnect(void)
 {
-    sim800_set_connected(FALSE);
-    sim800_powerdown();
-    sim800_setup(TRUE);
+    l206_set_connected(FALSE);
+    l206_powerdown();
+    l206_setup(TRUE);
 }
 
 void upload_task(void *unused)
 {
     OS_ERR err;
     uint8_t i;
+    static uint16_t upload_timer = 0;
 
     while(1) {
         //set the wdg feed flag
@@ -301,7 +306,7 @@ void upload_task(void *unused)
                 (OS_OPT)OS_OPT_POST_FLAG_SET,
                 (OS_ERR *)&err
                 );
-        OSTimeDlyHMSM(0, 0, 1,
+        OSTimeDlyHMSM(0, 0, 2,
                 0, OS_OPT_TIME_HMSM_STRICT, &err);
         if(!is_connected())
             continue;
@@ -320,6 +325,14 @@ void upload_task(void *unused)
                 mUpdateList[i].spend_time = 0;
             }
         }
+        upload_timer += 2;
+        if(upload_timer >= 300) {
+            upload_timer = 0;
+            //upload location
+            transmit_lock();
+            upload_location();
+            transmit_unlock();
+        }
     }
 }
 
@@ -332,7 +345,6 @@ void transmit_init(void)
             (CPU_CHAR *)"TRANSMIT_MUTEX",
             &err
             );
-
     OSTaskCreate((OS_TCB 	* )&TransmitCallbackTaskTCB,
             (CPU_CHAR	* )"transmit callback task",
             (OS_TASK_PTR )transmit_callback_task,
@@ -346,6 +358,7 @@ void transmit_init(void)
             (void   	* )0,
             (OS_OPT      )OS_OPT_TASK_STK_CHK|OS_OPT_TASK_STK_CLR,
             (OS_ERR 	* )&err);
+
     //heartbeat thread
     OSTaskCreate((OS_TCB 	* )&HeartbeatTaskTCB,
             (CPU_CHAR	* )"Heartbeat task",
@@ -374,7 +387,7 @@ void transmit_init(void)
             (void   	* )0,
             (OS_OPT      )OS_OPT_TASK_STK_CHK|OS_OPT_TASK_STK_CLR,
             (OS_ERR 	* )&err);
-    sim800_setup(FALSE);
+    l206_setup(FALSE);
     heartbeat_count = 0;
 }
 

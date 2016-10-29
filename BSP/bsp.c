@@ -2,7 +2,7 @@
 #include "bsp.h"
 #include "stdio.h"
 #include "flash.h"
-#include "sim800.h"
+#include "l206.h"
 #include "flexcan.h"
 
 #if 1
@@ -64,7 +64,8 @@ void BSP_Init(void)
     /* NVIC configuration */
     NVIC_Configuration();
     flash_init();
-    sim800_init();
+    //sim800_init();
+    l206_init();
 }
 
 /*******************************************************************************
