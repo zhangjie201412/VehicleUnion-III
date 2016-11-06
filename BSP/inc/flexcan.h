@@ -34,4 +34,5 @@ void flexcan_reset(void);
 void flexcan_lock(void);
 void flexcan_unlock(void);
 void flexcan_recv(void);
+void flexcan_set_engine_id(uint16_t id);
 #endif

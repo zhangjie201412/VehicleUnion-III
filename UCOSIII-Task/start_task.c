@@ -1,5 +1,6 @@
 #include "start_task.h"
 #include "led_task.h"
+#include "immo_task.h"
 #include "wdg_task.h"
 #include "vehicles.h"
 
@@ -52,6 +53,19 @@ void start_task(void *p_arg)
             (OS_OPT      )OS_OPT_TASK_STK_CHK|OS_OPT_TASK_STK_CLR,
             (OS_ERR 	* )&err);				
 #endif
+    OSTaskCreate((OS_TCB 	* )&ImmoTaskTCB,		
+            (CPU_CHAR	* )"immo task", 		
+            (OS_TASK_PTR )immo_task, 			
+            (void		* )0,					
+            (OS_PRIO	  )IMMO_TASK_PRIO,     
+            (CPU_STK   * )&IMMO_TASK_STK[0],	
+            (CPU_STK_SIZE)IMMO_STK_SIZE/10,	
+            (CPU_STK_SIZE)IMMO_STK_SIZE,		
+            (OS_MSG_QTY  )0,					
+            (OS_TICK	  )0,					
+            (void   	* )0,					
+            (OS_OPT      )OS_OPT_TASK_STK_CHK|OS_OPT_TASK_STK_CLR,
+            (OS_ERR 	* )&err);				
     //watchdog thread
     OSTaskCreate((OS_TCB 	* )&WdgTaskTCB,		
             (CPU_CHAR	* )"wdg task", 		

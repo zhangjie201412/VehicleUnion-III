@@ -193,12 +193,15 @@ void transmit_callback_task(void *unused)
                     if(!strcmp(item->valuestring, "toyota")) {
                         logi("##TOYOTA##");
                         vehicle_setup(VEHICLE_TOYOTA);
+                        flexcan_set_engine_id(0x7e8);
                     } else if(!strcmp(item->valuestring, "gm")) {
                         logi("##GM##");
                         vehicle_setup(VEHICLE_GM);
+                        flexcan_set_engine_id(0x7e8);
                     } else {
                         logi("##EOBD##");
                         vehicle_setup(VEHICLE_EOBD);
+                        flexcan_set_engine_id(0x7e8);
                     }
                     //post heart pend
                     OSTaskSemPost(&HeartbeatTaskTCB,

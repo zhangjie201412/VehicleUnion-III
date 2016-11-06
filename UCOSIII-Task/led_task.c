@@ -5,6 +5,7 @@
 #include "sim800.h"
 #include "utils.h"
 #include "flexcan.h"
+#include "rf_module.h"
 
 //任务控制块
 OS_TCB Led0TaskTCB;
@@ -26,12 +27,13 @@ void led0_task(void *p_arg)
     OS_ERR err;
     CanRxMsg *rxMsg;
 
+    uint8_t immo_lock;
+
     p_arg = p_arg;
     vehicles_init();
     transmit_init();
     while(1)
     {
-        OSTimeDlyHMSM(0,0,0,100,OS_OPT_TIME_HMSM_STRICT,&err); //延时200ms
-        //logi("signal = %d", sim800_get_signal());
+        OSTimeDlyHMSM(0,0,4,0,OS_OPT_TIME_HMSM_STRICT,&err); //延时200ms
     }
 }

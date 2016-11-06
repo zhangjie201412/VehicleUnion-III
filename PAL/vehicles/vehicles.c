@@ -8,6 +8,7 @@
 #include "gm.h"
 #include "toyota.h"
 #include "config.h"
+#include "rf_module.h"
 
 #define CONTROL_QUEUE_SIZE  10
 
@@ -22,6 +23,8 @@ uint16_t mVehiclesInterval;
 //update list
 UpdateItem mUpdateList[PID_SIZE];
 Vehicles mVehicles;
+
+bool mEngineOn = FALSE;
 
 void setVehiclesInterval(uint16_t interval)
 {
@@ -48,10 +51,10 @@ void vehicles_task(void *unused)
         //check engine is on
         if(mVehicles.dataOps->is_engine_on()) {
             //engine on
-            //logi("engine on");
+            logi("engine on");
         } else {
             //engine off
-            //logi("engine off");
+            logi("engine off");
         }
 
         xdelay(4);
@@ -127,6 +130,19 @@ void control_task(void *unused)
             case CONTROL_FINDCAR:
                 mVehicles.ctrlOps->control_findcar(val);
                 break;
+            case CONTROL_IMMOLOCK:
+                if(val) {
+                    //rf_lock();
+                    //save lock param
+                    set_immo_data(0x38);
+                    logi("save lock");
+                } else {
+                    //rf_unlock();
+                    //save unlock param
+                    set_immo_data(0x00);
+                    logi("save unlock");
+                }
+                break;
 
             default:
                 loge("%s: invalid id", __func__);
@@ -179,10 +195,13 @@ void vehicles_init(void)
 #ifdef SERVER_IS_VEHICLE_UNION
 #ifdef VEHICLE_TYPE_EOBD
     eobd_setup(&mVehicles);
+    flexcan_set_engine_id(0x7e8);
 #elif defined VEHICLE_TYPE_TOYOTA
     toyota_setup(&mVehicles);
+    flexcan_set_engine_id(0x7e8);
 #elif defined VEHICLE_TYPE_GM
     gm_setup(&mVehicles);
+    flexcan_set_engine_id(0x7e8);
 #endif
 #endif
 }
@@ -204,8 +223,13 @@ bool vehicle_engine_on(void)
     vehicle_lock();
     ret = mVehicles.dataOps->is_engine_on();
     vehicle_unlock();
-
+    mEngineOn = ret;
     return ret;
+}
+
+bool vehicle_check_engine(void)
+{
+    return mEngineOn;
 }
 
 uint32_t *vehicle_fault_code(uint8_t id, uint8_t *len)

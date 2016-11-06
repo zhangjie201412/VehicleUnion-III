@@ -52,5 +52,6 @@ void vehicle_clear_code(void);
 void vehicle_lock(void);
 void vehicle_unlock(void);
 
+bool vehicle_check_engine(void);
 
 #endif

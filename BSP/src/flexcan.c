@@ -14,6 +14,13 @@ static uint16_t filter_id = 0x00;
 OS_MUTEX mFlexcanMutex;
 OS_Q mFlexcanQueue;
 
+uint16_t engine_id;
+
+void flexcan_set_engine_id(uint16_t id)
+{
+    engine_id = id;
+}
+
 void flexcan_nvic_init(void)
 {
 	NVIC_InitTypeDef  NVIC_InitStructure;
@@ -291,11 +298,23 @@ void flexcan_rx_callack(void)
     OSIntExit();
 }
 
+void flexcan_recv_hook(uint16_t id)
+{
+    //logi("%s: engine_on = %d, engine_ = %04x, id = %04x", __func__,
+    //        vehicle_check_engine(),
+    //        engine_id, id);
+    if(id == engine_id && vehicle_check_engine() == 0) {
+        rf_unlock();
+    //    logi("%s: rf_unlock()", __func__);
+    }
+}
+
 void flexcan_recv(void)
 {
     OS_ERR err;
 
     CAN_Receive(CAN1, CAN_FIFO0, &m_rxMsg);
+    //flexcan_recv_hook(m_rxMsg.StdId);
     if(m_rxMsg.StdId == filter_id) {
         OSQPost(
                 (OS_Q *)&mFlexcanQueue,

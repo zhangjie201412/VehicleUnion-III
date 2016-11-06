@@ -115,6 +115,23 @@ void get_deviceid(void)
     flash_page_read(deviceid, DEVICE_ID_ADDRESS, 17);
 }
 
+uint8_t g_immo_data[2];
+void set_immo_data(uint8_t data)
+{
+    uint8_t ret;
+    g_immo_data[0] = data;
+    //flash_page_write(g_immo_data, IMMO_DATA_ADDRESS, 1);
+    ret = bsp_WriteCpuFlash(IMMO_DATA_ADDRESS, g_immo_data, 2);
+}
+
+uint8_t get_immo_data(void)
+{
+    //flash_page_read(g_immo_data, IMMO_DATA_ADDRESS, 1);
+    bsp_ReadCpuFlash(IMMO_DATA_ADDRESS, g_immo_data, 2);
+
+    return g_immo_data[0];
+}
+
 uint8_t json_get_msg_type(cJSON *json)
 {
     cJSON *item = cJSON_GetObjectItem(json, KEY_MSG_TYPE);

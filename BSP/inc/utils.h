@@ -58,6 +58,7 @@ enum {
 
 #define NAME_MAX_SIZE                   32
 #define DEVICE_ID_ADDRESS               0x80
+#define IMMO_DATA_ADDRESS               (0xFFFFF800 - 0x20)
 
 #ifdef SERVER_IS_K
     #define KEY_DEVICE_ID       "deviceid"
@@ -128,6 +129,8 @@ void get_deviceid(void);
 uint8_t json_get_msg_type(cJSON *json);
 uint8_t json_get_heartbeat(cJSON *json);
 void login(void);
+uint8_t get_immo_data(void);
+void set_immo_data(uint8_t data);
 
 void xdelay(uint8_t s);
 void xdelay_ms(uint16_t s);

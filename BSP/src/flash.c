@@ -166,8 +166,8 @@ uint8_t flash_check_id(void)
     id[1] = spi_recv_byte();
     id[2] = spi_recv_byte();
     NOSELECT();
-    //logi("id = 0x%02x, 0x%02x, 0x%02x, 0x%02x\r\n",
-    //        id[0], id[1], id[2], id[3]);
+    logi("id = 0x%02x, 0x%02x, 0x%02x, 0x%02x\r\n",
+            id[0], id[1], id[2], id[3]);
     if(id[0] == 0x20 && (id[1] == 0x20)
             && (id[2] == 0x15)) {
         return 0;
