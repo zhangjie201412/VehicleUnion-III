@@ -19,7 +19,7 @@
 #endif
 
 #define L206_RB_MAX_SIZE          256
-#define L206_CONNECT_RETRY_TIMES  8
+#define L206_CONNECT_RETRY_TIMES  4
 
 uint8_t mState;
 uint8_t mRingBuffer[L206_RB_MAX_SIZE];
@@ -183,6 +183,9 @@ bool l206_setup(bool reboot)
                 mState = STATE_CONNECTING;
                 break;
             case STATE_CONNECTING:
+                //check signal
+                logi("%s: signal = %d", __func__, l206_get_signal());
+                mState = STATE_CONNECTING;
                 logi("%s: STATE_CONNECTING", __func__);
                 ret = l206_connect(SERV_ADDR, SERV_PORT);
                 if(ret ==TRUE) {
@@ -250,7 +253,7 @@ void l206_recv(void)
                 break;
             case STATE_SIGNAL:
                 l206_lock();
-                //printf("%c", data);
+//                printf("%c", data);
                 rb_put(&mRb, &data, 1);
                 if(buf[2] == '\r' &&
                         buf[3] == '\n') {
@@ -345,6 +348,7 @@ bool l206_connect(const char *host, uint32_t port)
             host, port);
     logi("%s: %s", __func__, buf);
     l206_lock();
+    rb_clear(&mRb);
     ret = l206_send_cmd((const char *)buf, "\r\nOK");
     if(ret) {
         //l206_unlock();
@@ -354,7 +358,7 @@ bool l206_connect(const char *host, uint32_t port)
         if(ret == TRUE) {
             while(!rb_is_empty(&mRb)) {
                 rb_get(&mRb, &recv, 1);
-                //logi("RECV %02x", recv);
+                //logi("RECV %02x %c", recv, recv);
                 rx_buf[index ++] = recv;
             }
             l206_unlock();
@@ -491,6 +495,8 @@ uint8_t l206_get_signal(void)
         while(!rb_is_empty(&mRb)) {
             rb_get(&mRb, &recv, 1);
             rx_buf[index ++] = recv;
+            l206_delay_ms(1);
+            //logi("recv = %02x %c", recv, recv);
         }
         if(NULL != (s = strstr((const char *)rx_buf, "+CSQ:"))) {
             s = strstr((char *)(s), " ");
@@ -623,6 +629,7 @@ bool l206_down(uint16_t sec)
     OS_ERR err;
 
     //logi("%s", __func__);
+    OSSemSet(&mWait, 0, &err);
     OSSemPend(&mWait, sec * OS_CFG_TICK_RATE_HZ, OS_OPT_PEND_BLOCKING, 0, &err);
     if(err == OS_ERR_TIMEOUT) {
         logi("%s: timeout", __func__);

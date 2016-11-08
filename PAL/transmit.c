@@ -260,6 +260,8 @@ void heartbeat_task(void *unused)
         if(is_connected() && logined){
             heartbeat_count = (heartbeat_count == 100) ? 0 : heartbeat_count;
             transmit_lock();
+            //get signal
+            logi("signal = %d", l206_get_signal());
             heartbeat(heartbeat_count++);
             //wait for heartbeat rsp
             OSTaskSemPend(
@@ -275,6 +277,7 @@ void heartbeat_task(void *unused)
                     heartbeat_fail_times = 0;
                     //transmit_reconnect();
                     //temp solution
+                    loge("##SYSTEM REBOOT##");
                     SystemReset();
                 }
             } else {
@@ -341,6 +344,7 @@ void upload_task(void *unused)
 
 void transmit_init(void)
 {
+    bool ret;
     OS_ERR err;
 
     OSMutexCreate(
@@ -390,8 +394,12 @@ void transmit_init(void)
             (void   	* )0,
             (OS_OPT      )OS_OPT_TASK_STK_CHK|OS_OPT_TASK_STK_CLR,
             (OS_ERR 	* )&err);
-    l206_setup(FALSE);
     heartbeat_count = 0;
+    ret = l206_setup(FALSE);
+    if(!ret) {
+        loge("##SYSTEM REBOOT##");
+        SystemReset();
+    }
 }
 
 void transmit_control_rsp(uint32_t cmd_id, uint8_t id)
