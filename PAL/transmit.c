@@ -278,6 +278,7 @@ void heartbeat_task(void *unused)
                     //transmit_reconnect();
                     //temp solution
                     loge("##SYSTEM REBOOT##");
+                    l206_powerdown();
                     SystemReset();
                 }
             } else {
@@ -398,6 +399,10 @@ void transmit_init(void)
     ret = l206_setup(FALSE);
     if(!ret) {
         loge("##SYSTEM REBOOT##");
+        l206_powerdown();
+        //wait 30min to restart
+        OSTimeDlyHMSM(0, 30, 0,
+                0, OS_OPT_TIME_HMSM_STRICT, &err);
         SystemReset();
     }
 }
