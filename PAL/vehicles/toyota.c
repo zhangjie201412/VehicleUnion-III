@@ -15,7 +15,7 @@ CanTxMsg toyota_lamp_on =
     0x750, 0x18db33f1,
     CAN_ID_STD, CAN_RTR_DATA,
     8,
-    0x40, 0x06, 0x30, 0x15, 0xff, 0x20, 0x00, 0x00
+    0x40, 0x06, 0x30, 0x15, 0x00, 0x40, 0x00, 0x00
 };
 
 CanTxMsg toyota_lamp_off =
@@ -136,13 +136,13 @@ CanTxMsg toyota_findcar[2] =
         0x750, 0x18db33f1,
         CAN_ID_STD, CAN_RTR_DATA,
         8,
-        0x40, 0x04, 0x30, 0x06, 0xff, 0x00, 0x20, 0x00
+        0x40, 0x04, 0x30, 0x06, 0xff, 0x10, 0x00, 0x00
     },
     {
         0x750, 0x18db33f1,
         CAN_ID_STD, CAN_RTR_DATA,
         8,
-        0x40, 0x04, 0x30, 0x06, 0x00, 0x00, 0x20, 0x00
+        0x40, 0x04, 0x30, 0x06, 0x00, 0x00, 0x00, 0x00
     },
 };
 
@@ -1117,9 +1117,83 @@ uint8_t* toyota_data_stream(uint8_t pid, uint8_t *len)
 
 }
 
+CanTxMsg toyota_wakeup[2] =
+{
+    {
+        0x020, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        4,
+        0xe0, 0x00, 0x07, 0x0b
+    },
+    {
+        0x0ba, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        4,
+        0x00, 0x00, 0x00, 0xbe
+    },
+};
+#if 0
+CanTxMsg toyota_wakeup[8] =
+{
+    {
+        0x440, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        8,
+        0x40, 0x00, 0x80, 0x00, 0x01, 0x0f, 0x0f, 0x0f
+    },
+    {
+        0x44d, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        8,
+        0x4d, 0x00, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00
+    },
+    {
+        0x442, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        8,
+        0x42, 0x00, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00
+    },
+    {
+        0x443, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        8,
+        0x43, 0x00, 0x80, 0x20, 0x05, 0x00, 0x00, 0x00
+    },
+    {
+        0x440, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        8,
+        0x40, 0x01, 0x80, 0x00, 0x01, 0x00, 0x00, 0x00
+    },
+    {
+        0x44d, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        8,
+        0x4d, 0x01, 0x80, 0x00, 0x01, 0x00, 0x00, 0x00
+    },
+    {
+        0x442, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        8,
+        0x42, 0x01, 0x80, 0x00, 0x02, 0x00, 0x00, 0x00
+    },
+    {
+        0x443, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        8,
+        0x43, 0x01, 0x80, 0x20, 0x05, 0x00, 0x00, 0x00
+    },
+};
+#endif
+
 void toyota_ctrl_window(uint8_t state)
 {
     uint8_t i = 0;
+
+    for(i = 0; i < 2; i++) {
+        flexcan_send_frame(&toyota_wakeup[i]);
+        xdelay_ms(200);
+    }
     if(state) {
         for(i = 0; i < 4; i++) {
             flexcan_send_frame(&toyota_window_on[i]);
@@ -1139,6 +1213,13 @@ void toyota_ctrl_window(uint8_t state)
 
 void toyota_ctrl_door(uint8_t state)
 {
+    uint8_t i;
+
+    for(i = 0; i < 2; i++) {
+        flexcan_send_frame(&toyota_wakeup[i]);
+        xdelay_ms(200);
+    }
+
     toyota_keepalive();
     if(state) {
         flexcan_send_frame(&toyota_door_on);
@@ -1149,6 +1230,12 @@ void toyota_ctrl_door(uint8_t state)
 
 void toyota_ctrl_light(uint8_t state)
 {
+    uint8_t i;
+
+    for(i = 0; i < 2; i++) {
+        flexcan_send_frame(&toyota_wakeup[i]);
+        xdelay_ms(200);
+    }
     toyota_keepalive();
     if(state) {
         flexcan_send_frame(&toyota_lamp_on);
@@ -1159,16 +1246,48 @@ void toyota_ctrl_light(uint8_t state)
 
 void toyota_ctrl_sunroof(uint8_t state)
 {
+    uint8_t i;
+
+    for(i = 0; i < 2; i++) {
+        flexcan_send_frame(&toyota_wakeup[i]);
+        xdelay_ms(200);
+    }
     toyota_keepalive();
     if(state) {
         flexcan_send_frame(&toyota_sunroof_on);
+        xdelay(1);
+        flexcan_send_frame(&toyota_sunroof_on);
+        xdelay(1);
+        flexcan_send_frame(&toyota_sunroof_on);
+        xdelay(1);
+        flexcan_send_frame(&toyota_sunroof_on);
+        xdelay(1);
+        flexcan_send_frame(&toyota_sunroof_on);
+        xdelay(1);
+        flexcan_send_frame(&toyota_sunroof_on);
     } else {
+        flexcan_send_frame(&toyota_sunroof_off);
+        xdelay(1);
+        flexcan_send_frame(&toyota_sunroof_off);
+        xdelay(1);
+        flexcan_send_frame(&toyota_sunroof_off);
+        xdelay(1);
+        flexcan_send_frame(&toyota_sunroof_off);
+        xdelay(1);
+        flexcan_send_frame(&toyota_sunroof_off);
+        xdelay(1);
         flexcan_send_frame(&toyota_sunroof_off);
     }
 }
 
 void toyota_ctrl_trunk(uint8_t state)
 {
+    uint8_t i;
+
+    for(i = 0; i < 2; i++) {
+        flexcan_send_frame(&toyota_wakeup[i]);
+        xdelay_ms(200);
+    }
     toyota_keepalive();
     if(state) {
         flexcan_send_frame(&toyota_trunk_on);
@@ -1181,17 +1300,20 @@ void toyota_ctrl_trunk(uint8_t state)
 void toyota_ctrl_findcar(uint8_t state)
 {
     uint8_t i = 0;
-    if(state) {
-        for(i = 0; i < 2; i++) {
-            flexcan_send_frame(&toyota_findcar[i]);
-            xdelay(3);
-        }
-    } else {
-        for(i = 0; i < 2; i++) {
-            flexcan_send_frame(&toyota_findcar[i]);
-            xdelay(3);
-        }
+    for(i = 0; i < 2; i++) {
+        flexcan_send_frame(&toyota_wakeup[i]);
+        xdelay_ms(200);
     }
+
+    flexcan_send_frame(&toyota_findcar[0]);
+    xdelay_ms(100);
+    flexcan_send_frame(&toyota_lamp_on);
+    xdelay(3);
+    flexcan_send_frame(&toyota_findcar[1]);
+    xdelay_ms(100);
+    flexcan_send_frame(&toyota_lamp_off);
+    xdelay(3);
+
     for(i = 0; i < 2; i++) {
         toyota_keepalive();
         xdelay(2);
