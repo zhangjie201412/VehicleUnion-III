@@ -340,10 +340,11 @@ bool l206_connect(const char *host, uint32_t port)
     bool ret;
     uint8_t buf[128];
     uint8_t recv;
-    uint8_t rx_buf[20];
+    uint8_t rx_buf[64];
     uint8_t index = 0;
 
     memset(buf, 0x00, 128);
+    memset(rx_buf, 0x00, 64);
     snprintf((char *)buf, 128, "AT+ZIPOPEN=2,0,%s,%d\r\n",
             host, port);
     logi("%s: %s", __func__, buf);
