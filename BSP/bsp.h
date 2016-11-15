@@ -21,6 +21,8 @@ void RCC_Configuration(void);
 void GPIO_Configuration(void);
 void NVIC_Configuration(void);
 void BSP_Init(void);
+void adc_config(void);
+uint16_t get_adc_value(void);
 void USART_Config(u32 baud);
 
 #endif

@@ -35,5 +35,6 @@ void led0_task(void *p_arg)
     while(1)
     {
         OSTimeDlyHMSM(0,0,4,0,OS_OPT_TIME_HMSM_STRICT,&err); //ÑÓÊ±200ms
+        //logi("adc = %d", (get_adc_value()*3300) >> 12);
     }
 }
