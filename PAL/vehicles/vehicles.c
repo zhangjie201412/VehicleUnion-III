@@ -38,7 +38,7 @@ void vehicles_task(void *unused)
     OS_ERR err;
     unused = unused;
 
-    mVehiclesInterval = 10;
+    mVehiclesInterval = 30;
     while(1) {
 		OSTimeDlyHMSM(0, 0, mVehiclesInterval,
                 0, OS_OPT_TIME_HMSM_STRICT, &err);
@@ -57,8 +57,8 @@ void vehicles_task(void *unused)
             logi("engine off");
         }
 
-        xdelay(4);
         for(i = 0; i < PID_SIZE; i++) {
+            xdelay(2);
             vehicle_lock();
             if(mVehicles.dataOps->transfer_data_stream == NULL) {
                 loge("transfer data stream function is null");

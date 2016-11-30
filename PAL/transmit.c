@@ -15,10 +15,10 @@
 
 #define HEARTBEAT_FAIL_TOLERENT         3
 
-#define ENG_INTERVAL                    50
-#define AT_INTERVAL                     60
-#define ABS_INTERVAL                    40
-#define BCM_INTERVAL                    30
+#define ENG_INTERVAL                    500
+#define AT_INTERVAL                     600
+#define ABS_INTERVAL                    400
+#define BCM_INTERVAL                    300
 
 OS_TCB TransmitCallbackTaskTCB;
 CPU_STK TRANSMIT_CALLBACK_TASK_STK[TRANSMIT_CALLBACK_STK_SIZE];
@@ -220,6 +220,7 @@ void heartbeat_task(void *unused)
 {
     OS_ERR err;
     static bool logined = FALSE;
+    uint8_t login_retry_count = 0;
 
     while(1) {
         //set the wdg feed flag
@@ -246,10 +247,15 @@ void heartbeat_task(void *unused)
             if(err == OS_ERR_TIMEOUT) {
                 loge("##wait for login timeout");
                 loge("##retry##");
+                if(login_retry_count ++ > 10) {
+                    loge("login retry %d times, reboot system", login_retry_count);
+                    SystemReset();
+                }
                 continue;
             } else {
                 logi("get login rsp!");
                 logined = TRUE;
+                login_retry_count = 0;
             }
         }
 #elif defined SERVER_IS_VEHICLE_UNION
@@ -319,7 +325,7 @@ void upload_task(void *unused)
             continue;
 
         for(i = 0; i < PID_SIZE; i++) {
-            mUpdateList[i].spend_time += 1;
+            mUpdateList[i].spend_time += 2;
             if(mUpdateList[i].updated &&
                     (mUpdateList[i].spend_time >= pidList[i].interval)) {
                 mUpdateList[i].pid = i;
@@ -401,7 +407,7 @@ void transmit_init(void)
         loge("##SYSTEM REBOOT##");
         l206_powerdown();
         //wait 30min to restart
-        OSTimeDlyHMSM(0, 30, 0,
+        OSTimeDlyHMSM(0, 10, 0,
                 0, OS_OPT_TIME_HMSM_STRICT, &err);
         SystemReset();
     }
