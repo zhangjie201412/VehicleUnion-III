@@ -134,7 +134,7 @@ typedef struct {
     uint8_t data[8];
     uint8_t len;
     uint8_t updated;
-    uint8_t spend_time;
+    uint16_t spend_time;
 } UpdateItem;
 
 typedef struct {
