@@ -7,6 +7,7 @@
 #include "eobd.h"
 #include "gm.h"
 #include "toyota.h"
+#include "vag.h"
 #include "config.h"
 #include "rf_module.h"
 
@@ -202,6 +203,8 @@ void vehicles_init(void)
 #elif defined VEHICLE_TYPE_GM
     gm_setup(&mVehicles);
     flexcan_set_engine_id(0x7e8);
+#elif defined VEHICLE_TYPE_VAG
+    vag_setup(&mVehicles);
 #endif
 #endif
 }
@@ -212,6 +215,8 @@ void vehicle_setup(uint8_t type)
         toyota_setup(&mVehicles);
     } else if(type == VEHICLE_GM) {
         gm_setup(&mVehicles);
+    } else if(type == VEHICLE_VAG) {
+        vag_setup(&mVehicles);
     } else if(type == VEHICLE_EOBD) {
         eobd_setup(&mVehicles);
     }

@@ -14,6 +14,7 @@
 typedef enum {
     VEHICLE_TOYOTA,
     VEHICLE_GM,
+    VEHICLE_VAG,
     VEHICLE_EOBD,
 } VehicleType;
 

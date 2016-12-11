@@ -135,7 +135,7 @@ void transmit_callback_task(void *unused)
             loge("[%s]", cJSON_GetErrorPtr());
         } else {
             msg_type = json_get_msg_type(json);
-            logi("msg_type = %d", msg_type);
+            //logi("msg_type = %d", msg_type);
 
             switch(msg_type) {
                 case MSG_TYPE_HEARTBEAT_RSP:
@@ -198,6 +198,9 @@ void transmit_callback_task(void *unused)
                         logi("##GM##");
                         vehicle_setup(VEHICLE_GM);
                         flexcan_set_engine_id(0x7e8);
+                    } else if(!strcmp(item->valuestring, "vag")) {
+                        logi("##VAG##");
+                        vehicle_setup(VEHICLE_VAG);
                     } else {
                         logi("##EOBD##");
                         vehicle_setup(VEHICLE_EOBD);
@@ -424,7 +427,7 @@ void transmit_lock(void)
 {
     OS_ERR err;
 
-    logi("+++%s+++", __func__);
+//    logi("+++%s+++", __func__);
     OSMutexPend(&mTransmitMutex, 0, OS_OPT_PEND_BLOCKING, 0, &err);
 }
 
@@ -432,7 +435,7 @@ void transmit_unlock(void)
 {
     OS_ERR err;
 
-    logi("---%s---", __func__);
+//    logi("---%s---", __func__);
     OSMutexPost(&mTransmitMutex, OS_OPT_POST_NONE, &err);
 }
 
