@@ -10,6 +10,9 @@
 #define VEHICLES_STK_SIZE 		512u
 #define CONTROL_TASK_PRIO		27u
 #define CONTROL_STK_SIZE 		256u
+//keepalive thread
+#define KEEPALIVE_TASK_PRIO     15u
+#define KEEPALIVE_STK_SIZE      512u
 
 typedef enum {
     VEHICLE_TOYOTA,

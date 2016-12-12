@@ -56,6 +56,7 @@ typedef enum {
     //31~40
     ENG_DATA_FUELLEVEL,
     ENG_DATA_FUELTANK,
+    ENG_DATA_REALFUELCO,
     ENG_DATA_SIZE,
     AT_DATA_OILTEMP = ENG_DATA_SIZE,
     ABS_DATA_OILLEVEL,
@@ -141,6 +142,9 @@ typedef struct {
     uint8_t (*is_engine_on)(void);
     uint8_t *(*transfer_data_stream)(uint8_t pid, uint8_t *len);
     uint32_t *(*check_fault_code)(uint8_t id, uint8_t *len);
+    void (*init)(void);
+    void (*keepalive)(void);
+    void (*exit)(void);
 } DevUploadOps;
 
 typedef struct {

@@ -79,6 +79,7 @@ PidItem pidList[PID_SIZE] =
     {ENG_DATA_FUEL, "eng_data_fuel", ENG_INTERVAL},
     {ENG_DATA_FUELLEVEL, "eng_data_fuellevel", ENG_INTERVAL},
     {ENG_DATA_FUELTANK, "eng_data_fueltank", ENG_INTERVAL},
+    {ENG_DATA_REALFUELCO, "eng_data_realfuelco", ENG_INTERVAL},
     {AT_DATA_OILTEMP, "at_data_oiltemp", AT_INTERVAL},
     {ABS_DATA_OILLEVEL, "abs_data_oillevel", ABS_INTERVAL},
     {BCM_DATA_CHARGESTATUS, "bcm_data_chargestatus", BCM_INTERVAL},

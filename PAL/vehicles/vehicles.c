@@ -12,11 +12,15 @@
 #include "rf_module.h"
 
 #define CONTROL_QUEUE_SIZE  10
+#define KEEPALIVE_INTERVAL              2
 
 OS_TCB VehiclesTaskTCB;
 CPU_STK VEHICLES_TASK_STK[VEHICLES_STK_SIZE];
 OS_TCB ControlTaskTCB;
 CPU_STK CONTROL_TASK_STK[CONTROL_STK_SIZE];
+//keepalive thread
+OS_TCB KeepaliveTaskTCB;
+CPU_STK KEEPALIVE_TASK_STK[KEEPALIVE_STK_SIZE];
 
 OS_MUTEX mVehicleMutex;
 
@@ -81,6 +85,28 @@ void vehicles_task(void *unused)
             }
             mUpdateList[i].updated = TRUE;
         }
+    }
+}
+
+void keepalive_task(void *unused)
+{
+    OS_ERR err;
+
+    while(1) {
+        OSTimeDlyHMSM(0, 0, KEEPALIVE_INTERVAL,
+                0, OS_OPT_TIME_HMSM_STRICT, &err);
+        //send keepalive
+        if(mVehicles.ctrlOps == NULL ||
+                mVehicles.dataOps == NULL ||
+                mVehicles.init == FALSE) {
+            continue;
+        }
+        /*
+        if(mVehicles.dataOps->keepalive != NULL) {
+            //send keepalive
+            mVehicles.dataOps->keepalive();
+        }
+        */
     }
 }
 
@@ -190,6 +216,22 @@ void vehicles_init(void)
             (void   	* )0,					
             (OS_OPT      )OS_OPT_TASK_STK_CHK|OS_OPT_TASK_STK_CLR,
             (OS_ERR 	* )&err);				
+    //keepalive thread
+    /*
+    OSTaskCreate((OS_TCB 	* )&KeepaliveTaskTCB,
+            (CPU_CHAR	* )"Keepalive task",
+            (OS_TASK_PTR )keepalive_task,
+            (void		* )0,
+            (OS_PRIO	  )KEEPALIVE_TASK_PRIO,
+            (CPU_STK   * )&KEEPALIVE_TASK_STK[0],
+            (CPU_STK_SIZE)KEEPALIVE_STK_SIZE/10,
+            (CPU_STK_SIZE)KEEPALIVE_STK_SIZE,
+            (OS_MSG_QTY  )0,
+            (OS_TICK	  )0,
+            (void   	* )0,
+            (OS_OPT      )OS_OPT_TASK_STK_CHK|OS_OPT_TASK_STK_CLR,
+            (OS_ERR 	* )&err);
+            */
     memset(&mVehicles, 0x00, sizeof(Vehicles));
     flexcan_init(CAN_500K);
     mVehicles.init = FALSE;
