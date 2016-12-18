@@ -21,7 +21,15 @@ typedef enum {
 } EnumControlCapability;
 
 typedef enum {
-    ENG_DATA_RPM,
+    TYPE_ENG,
+    TYPE_AT,
+    TYPE_ABS,
+    TYPE_BCM,
+};
+
+typedef enum {
+    ENG_DATA_START = 0,
+    ENG_DATA_RPM = ENG_DATA_START,
     ENG_DATA_VS,
     ENG_DATA_ECT,
     ENG_DATA_IAT,
@@ -57,9 +65,13 @@ typedef enum {
     ENG_DATA_FUELLEVEL,
     ENG_DATA_FUELTANK,
     ENG_DATA_REALFUELCO,
-    ENG_DATA_SIZE,
-    AT_DATA_OILTEMP = ENG_DATA_SIZE,
-    ABS_DATA_OILLEVEL,
+    ENG_DATA_END = ENG_DATA_REALFUELCO,
+    AT_DATA_START,
+    AT_DATA_OILTEMP = AT_DATA_START,
+    AT_DATA_END = AT_DATA_OILTEMP,
+    ABS_DATA_START,
+    ABS_DATA_OILLEVEL = ABS_DATA_START,
+    ABS_DATA_END = ABS_DATA_OILLEVEL,
     BCM_DATA_START,
     BCM_DATA_CHARGESTATUS = BCM_DATA_START,
     BCM_DATA_BATTCURRENT,
@@ -81,6 +93,7 @@ typedef enum {
     BCM_DATA_LEFTTURN,
     BCM_DATA_RIGHTTURN,
     BCM_DATA_ODO,
+    BCM_DATA_END = BCM_DATA_ODO,
     TPMS_DATA_LFTIREP,
     TPMS_DATA_RFTIREP,
     TPMS_DATA_LRTIREP,
@@ -142,9 +155,6 @@ typedef struct {
     uint8_t (*is_engine_on)(void);
     uint8_t *(*transfer_data_stream)(uint8_t pid, uint8_t *len);
     uint32_t *(*check_fault_code)(uint8_t id, uint8_t *len);
-    void (*init)(void);
-    void (*keepalive)(void);
-    void (*exit)(void);
 } DevUploadOps;
 
 typedef struct {

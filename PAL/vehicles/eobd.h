@@ -13,6 +13,10 @@ void eobd_ctrl_sunroof(uint8_t state);
 void eobd_ctrl_trunk(uint8_t state);
 void eobd_ctrl_findcar(uint8_t state);
 
+void eobd_init(uint8_t type);
+void eobd_exit(uint8_t type);
+void eobd_keepalive(uint8_t type);
+
 bool eobd_engine_on(void);
 uint8_t* eobd_data_stream(uint8_t pid, uint8_t *len);
 uint32_t *eobd_check_fault_code(uint8_t id, uint8_t *len);

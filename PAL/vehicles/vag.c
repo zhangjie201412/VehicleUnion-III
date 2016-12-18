@@ -550,11 +550,21 @@ void vag_setup(Vehicles *vehicle)
     vag_data_ops.transfer_data_stream = vag_data_stream;
     vag_data_ops.is_engine_on = vag_engine_on;
     vag_data_ops.check_fault_code = vag_check_fault_code;
+    vag_data_ops.init = vag_init;
+    vag_data_ops.exit = vag_exit;
+    vag_data_ops.keepalive = vag_keepalive;
 
     vehicle->ctrlOps = &vag_ctrl_ops;
     vehicle->dataOps = &vag_data_ops;
     vehicle->init = TRUE;
 }
+
+void vag_init(uint8_t type)
+{}
+void vag_exit(uint8_t type)
+{}
+void vag_keepalive(uint8_t type)
+{}
 
 void vag_ctrl_window(uint8_t state)
 {

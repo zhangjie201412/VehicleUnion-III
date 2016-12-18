@@ -58,7 +58,7 @@ enum {
 
 #define NAME_MAX_SIZE                   32
 #define DEVICE_ID_ADDRESS               0x80
-#define IMMO_DATA_ADDRESS               (0xFFFFF800 - 0x20)
+#define IMMO_DATA_ADDRESS               (0x8080000 - 0x80)
 
 #ifdef SERVER_IS_K
     #define KEY_DEVICE_ID       "deviceid"

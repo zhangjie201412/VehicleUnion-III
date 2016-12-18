@@ -266,6 +266,9 @@ void eobd_setup(Vehicles *vehicle)
     eobd_data_ops.transfer_data_stream = eobd_data_stream;
     eobd_data_ops.is_engine_on = eobd_engine_on;
     eobd_data_ops.check_fault_code = eobd_check_fault_code;
+    eobd_data_ops.init = eobd_init;
+    eobd_data_ops.exit = eobd_exit;
+    eobd_data_ops.keepalive = eobd_keepalive;
 
     vehicle->ctrlOps = &eobd_ctrl_ops;
     vehicle->dataOps = &eobd_data_ops;
@@ -300,6 +303,21 @@ void eobd_ctrl_trunk(uint8_t state)
 void eobd_ctrl_findcar(uint8_t state)
 {
     logi("-> %s", __func__);
+}
+
+void eobd_init(uint8_t type)
+{
+    logi("-> %s", __func__);
+}
+
+void eobd_exit(uint8_t type)
+{
+    logi("-> %s", __func__);
+}
+
+void eobd_keepalive(uint8_t type)
+{
+    logi("-> %s, type = %d", __func__, type);
 }
 
 bool eobd_engine_on(void)

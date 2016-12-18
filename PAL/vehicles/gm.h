@@ -23,6 +23,10 @@ void gm_ctrl_findcar(uint8_t state);
 uint8_t* fake_data_stream(uint8_t pid, uint8_t *len);
 uint8_t* gm_data_stream(uint8_t pid, uint8_t *len);
 
+void gm_init(uint8_t type);
+void gm_exit(uint8_t type);
+void gm_keepalive(uint8_t type);
+
 bool gm_engine_on(void);
 void gm_clear_fault_code(void);
 uint32_t *gm_check_fault_code(uint8_t id, uint8_t *len);

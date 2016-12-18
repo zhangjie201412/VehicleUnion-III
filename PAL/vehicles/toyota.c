@@ -671,17 +671,35 @@ CanTxMsg toyotaEngineCmd =
     0x02, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
+CanTxMsg toyota_eng_keepalive =
+{
+    0x7e0, 0x18db33f1,
+    CAN_ID_STD, CAN_RTR_DATA,
+    8,
+    0x02, 0x3e, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00
+};
+
+CanTxMsg toyota_at_keepalive =
+{
+    0x7c0, 0x18db33f1,
+    CAN_ID_STD, CAN_RTR_DATA,
+    8,
+    0x02, 0x3e, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00
+};
+
+CanTxMsg toyota_bcm_keepalive =
+{
+    0x750, 0x18db33f1,
+    CAN_ID_STD, CAN_RTR_DATA,
+    8,
+    0x40, 0x01, 0x3e, 0x01, 0x00, 0x00, 0x00, 0x00
+};
+
 __IO uint32_t toyota_code_val[FAULT_CODE_MAX_SIZE];
 __IO uint8_t toyota_fault_data[100];
 
 ToyotaSupportList mToyotaSupportList;
 uint8_t toyota_support_buffer[1280];
-
-void toyota_keepalive(void)
-{
-    flexcan_send_frame(&toyota_keepalive_normal);
-    flexcan_send_frame(&toyota_keepalive_door);
-}
 
 void toyota_setup(Vehicles *vehicle)
 {
@@ -699,6 +717,9 @@ void toyota_setup(Vehicles *vehicle)
     toyota_data_ops.transfer_data_stream = toyota_data_stream;
     toyota_data_ops.is_engine_on = toyota_engine_on;
     toyota_data_ops.check_fault_code = toyota_check_fault_code;
+    toyota_data_ops.init = toyota_init;
+    toyota_data_ops.exit = toyota_exit;
+    toyota_data_ops.keepalive = toyota_keepalive;
 
     vehicle->ctrlOps = &toyota_ctrl_ops;
     vehicle->dataOps = &toyota_data_ops;
@@ -711,6 +732,35 @@ void toyota_setup(Vehicles *vehicle)
         toyota_support_buffer[i] = 0x00;
     }
     vehicle->init = TRUE;
+}
+
+void toyota_init(uint8_t type)
+{}
+
+void toyota_exit(uint8_t type)
+{}
+
+void toyota_keepalive(uint8_t type)
+{
+    switch(type) {
+        case TYPE_ENG:
+            flexcan_send_frame(&toyota_eng_keepalive);
+            xdelay_ms(100);
+            break;
+        case TYPE_AT:
+            flexcan_send_frame(&toyota_at_keepalive);
+            xdelay_ms(100);
+            break;
+        case TYPE_ABS:
+            xdelay_ms(100);
+            break;
+        case TYPE_BCM:
+            flexcan_send_frame(&toyota_bcm_keepalive);
+            xdelay_ms(100);
+            break;
+        default:
+            break;
+    }
 }
 
 bool toyota_engine_on(void)
@@ -1210,10 +1260,6 @@ void toyota_ctrl_window(uint8_t state)
             xdelay_ms(500);
         }
     }
-    for(i = 0; i < 3; i++) {
-        toyota_keepalive();
-        xdelay(2);
-    }
 }
 
 void toyota_ctrl_door(uint8_t state)
@@ -1225,7 +1271,6 @@ void toyota_ctrl_door(uint8_t state)
         xdelay_ms(200);
     }
 
-    toyota_keepalive();
     if(state) {
         flexcan_send_frame(&toyota_door_on);
     } else {
@@ -1241,7 +1286,6 @@ void toyota_ctrl_light(uint8_t state)
         flexcan_send_frame(&toyota_wakeup[i]);
         xdelay_ms(200);
     }
-    toyota_keepalive();
     if(state) {
         flexcan_send_frame(&toyota_lamp_on);
     } else {
@@ -1257,7 +1301,6 @@ void toyota_ctrl_sunroof(uint8_t state)
         flexcan_send_frame(&toyota_wakeup[i]);
         xdelay_ms(200);
     }
-    toyota_keepalive();
     if(state) {
         flexcan_send_frame(&toyota_sunroof_on);
         xdelay(1);
@@ -1293,7 +1336,6 @@ void toyota_ctrl_trunk(uint8_t state)
         flexcan_send_frame(&toyota_wakeup[i]);
         xdelay_ms(200);
     }
-    toyota_keepalive();
     if(state) {
         flexcan_send_frame(&toyota_trunk_on);
     } else {
@@ -1318,11 +1360,6 @@ void toyota_ctrl_findcar(uint8_t state)
     xdelay_ms(100);
     flexcan_send_frame(&toyota_lamp_off);
     xdelay(3);
-
-    for(i = 0; i < 2; i++) {
-        toyota_keepalive();
-        xdelay(2);
-    }
 }
 
 void toyota_clear_fault_code(void)

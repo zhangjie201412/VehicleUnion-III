@@ -35,6 +35,9 @@ typedef struct {
     bool (*is_engine_on)(void);
     uint8_t *(*transfer_data_stream)(uint8_t pid, uint8_t *len);
     uint32_t *(*check_fault_code)(uint8_t id, uint8_t *len);
+    void (*init)(uint8_t type);
+    void (*keepalive)(uint8_t type);
+    void (*exit)(uint8_t type);
 } VehiclesDataOps;
 
 typedef struct {
@@ -46,6 +49,7 @@ typedef struct {
 extern OS_TCB ControlTaskTCB;
 extern UpdateItem mUpdateList[PID_SIZE];
 
+uint8_t getTransmitType(void);
 void vehicles_init(void);
 void vehicle_setup(uint8_t type);
 void vehicles_task(void *unused);

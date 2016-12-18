@@ -825,14 +825,6 @@ GmDataStream gmDataStream[PID_SIZE] =
     },
 };
 
-CanTxMsg gm_keepalive =
-{
-    0x241, 0x18db33f1,
-    CAN_ID_STD, CAN_RTR_DATA,
-    8,
-    0x01, 0x3e, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-};
-
 CanTxMsg gm_fault_code =
 {
     0x000, 0x18db33f1,
@@ -871,6 +863,102 @@ uint16_t gm_code_list[FAULT_CODE_MAX_SIZE][2] =
     {0x241, 0x541},
 };
 
+CanTxMsg gm_eng_init_code[2] =
+{
+    {
+        0x7e0, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        2,
+        0x01, 0x3e
+    },
+    {
+        0x7e0, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        3,
+        0x02, 0xaa, 0x00
+    }
+};
+
+CanTxMsg gm_at_init_code[2] =
+{
+    {
+        0x7e2, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        2,
+        0x01, 0x3e
+    },
+    {
+        0x7e2, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        3,
+        0x02, 0xaa, 0x00
+    }
+};
+
+CanTxMsg gm_abs_init_code[2] =
+{
+    {
+        0x243, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        2,
+        0x01, 0x3e
+    },
+    {
+        0x243, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        3,
+        0x02, 0xaa, 0x00
+    }
+};
+
+CanTxMsg gm_bcm_init_code[2] =
+{
+    {
+        0x241, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        2,
+        0x01, 0x3e
+    },
+    {
+        0x241, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        3,
+        0x02, 0xaa, 0x00
+    }
+};
+
+CanTxMsg gm_eng_exit_code =
+{
+    0x7e0, 0x18db33f1,
+    CAN_ID_STD, CAN_RTR_DATA,
+    2,
+    0x01, 0x20
+};
+
+CanTxMsg gm_at_exit_code =
+{
+    0x7e2, 0x18db33f1,
+    CAN_ID_STD, CAN_RTR_DATA,
+    2,
+    0x01, 0x20
+};
+
+CanTxMsg gm_abs_exit_code =
+{
+    0x243, 0x18db33f1,
+    CAN_ID_STD, CAN_RTR_DATA,
+    2,
+    0x01, 0x20
+};
+
+CanTxMsg gm_bcm_exit_code =
+{
+    0x241, 0x18db33f1,
+    CAN_ID_STD, CAN_RTR_DATA,
+    2,
+    0x01, 0x20
+};
+
 __IO uint8_t gm_rx_buf[8];
 __IO uint32_t gm_code_val[FAULT_CODE_MAX_SIZE];
 
@@ -889,10 +977,96 @@ void gm_setup(Vehicles *vehicle)
     gm_data_ops.transfer_data_stream = gm_data_stream;
     gm_data_ops.is_engine_on = gm_engine_on;
     gm_data_ops.check_fault_code = gm_check_fault_code;
+    gm_data_ops.init = gm_init;
+    gm_data_ops.exit = gm_exit;
+    gm_data_ops.keepalive = gm_keepalive;
 
     vehicle->ctrlOps = &gm_ctrl_ops;
     vehicle->dataOps = &gm_data_ops;
     vehicle->init = TRUE;
+}
+
+void gm_init(uint8_t type)
+{
+    uint8_t i;
+
+    switch(type) {
+        case TYPE_ENG:
+            for(i = 0; i < 2; i ++) {
+                flexcan_send_frame(&gm_eng_init_code[i]);
+                xdelay_ms(100);
+            }
+            break;
+        case TYPE_AT:
+            for(i = 0; i < 2; i ++) {
+                flexcan_send_frame(&gm_at_init_code[i]);
+                xdelay_ms(100);
+            }
+            break;
+        case TYPE_ABS:
+            for(i = 0; i < 2; i ++) {
+                flexcan_send_frame(&gm_abs_init_code[i]);
+                xdelay_ms(100);
+            }
+            break;
+        case TYPE_BCM:
+            for(i = 0; i < 2; i ++) {
+                flexcan_send_frame(&gm_bcm_init_code[i]);
+                xdelay_ms(100);
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+void gm_exit(uint8_t type)
+{
+
+    switch(type) {
+        case TYPE_ENG:
+            flexcan_send_frame(&gm_eng_exit_code);
+            xdelay_ms(100);
+            break;
+        case TYPE_AT:
+            flexcan_send_frame(&gm_at_exit_code);
+            xdelay_ms(100);
+            break;
+        case TYPE_ABS:
+            flexcan_send_frame(&gm_abs_exit_code);
+            xdelay_ms(100);
+            break;
+        case TYPE_BCM:
+            flexcan_send_frame(&gm_bcm_exit_code);
+            xdelay_ms(100);
+            break;
+        default:
+            break;
+    }
+}
+
+void gm_keepalive(uint8_t type)
+{
+    switch(type) {
+        case TYPE_ENG:
+            flexcan_send_frame(&gm_eng_init_code[0]);
+            xdelay_ms(100);
+            break;
+        case TYPE_AT:
+            flexcan_send_frame(&gm_at_init_code[0]);
+            xdelay_ms(100);
+            break;
+        case TYPE_ABS:
+            flexcan_send_frame(&gm_abs_init_code[0]);
+            xdelay_ms(100);
+            break;
+        case TYPE_BCM:
+            flexcan_send_frame(&gm_bcm_init_code[0]);
+            xdelay_ms(100);
+            break;
+        default:
+            break;
+    }
 }
 
 bool gm_engine_on(void)
@@ -1049,10 +1223,6 @@ void gm_ctrl_door(uint8_t state)
 {
     uint8_t i = 0;
     logi("-> %s\r\n", __func__);
-    flexcan_send_frame(&gm_exit_cmd);
-    xdelay_ms(500);
-    flexcan_send_frame(&gm_keepalive);
-    xdelay(1);
     if(state) {
         for(i = 0; i < 5; i++) {
             flexcan_send_frame(&gm_door_on[i]);
@@ -1062,31 +1232,22 @@ void gm_ctrl_door(uint8_t state)
             flexcan_send_frame(&gm_door_off[i]);
         }
     }
-    flexcan_send_frame(&gm_keepalive);
 }
 
 void gm_ctrl_light(uint8_t state)
 {
     logi("-> %s\r\n", __func__);
-    flexcan_send_frame(&gm_exit_cmd);
-    xdelay_ms(500);
-    flexcan_send_frame(&gm_keepalive);
-    xdelay(1);
     if(state) {
         flexcan_send_frame(&gm_lamp_on);
     } else {
         flexcan_send_frame(&gm_lamp_off);
     }
-    xdelay(1);
-    flexcan_send_frame(&gm_keepalive);
 }
 
 void gm_ctrl_sunroof(uint8_t state)
 {
     uint8_t i = 0;
     logi("-> %s\r\n", __func__);
-    flexcan_send_frame(&gm_exit_cmd);
-    xdelay_ms(500);
     if(state) {
         for(i = 0; i < 3; i ++) {
             flexcan_send_frame(&gm_sunroof_on[i]);
@@ -1104,9 +1265,6 @@ void gm_ctrl_trunk(uint8_t state)
 {
     uint8_t i = 0;
     logi("-> %s\r\n", __func__);
-    flexcan_send_frame(&gm_exit_cmd);
-    xdelay_ms(500);
-    flexcan_send_frame(&gm_keepalive);
     xdelay(1);
     if(state) {
         for(i = 0; i < 2; i ++) {
@@ -1119,16 +1277,12 @@ void gm_ctrl_trunk(uint8_t state)
             xdelay_ms(500);
         }
     }
-    flexcan_send_frame(&gm_keepalive);
 }
 
 void gm_ctrl_findcar(uint8_t state)
 {
     uint8_t i = 0;
     logi("-> %s\r\n", __func__);
-    flexcan_send_frame(&gm_exit_cmd);
-    xdelay_ms(500);
-    flexcan_send_frame(&gm_keepalive);
     xdelay(1);
     if(state) {
         for(i = 0; i < 2; i ++) {
@@ -1141,7 +1295,6 @@ void gm_ctrl_findcar(uint8_t state)
             xdelay_ms(200);
         }
     }
-    flexcan_send_frame(&gm_keepalive);
 }
 
 void gm_clear_fault_code(void)

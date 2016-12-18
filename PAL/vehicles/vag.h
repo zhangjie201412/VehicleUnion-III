@@ -13,6 +13,9 @@ void vag_ctrl_sunroof(uint8_t state);
 void vag_ctrl_trunk(uint8_t state);
 void vag_ctrl_findcar(uint8_t state);
 
+void vag_init(uint8_t type);
+void vag_exit(uint8_t type);
+void vag_keepalive(uint8_t type);
 bool vag_engine_on(void);
 uint8_t* vag_data_stream(uint8_t pid, uint8_t *len);
 uint32_t *vag_check_fault_code(uint8_t id, uint8_t *len);

@@ -24,7 +24,10 @@ void toyota_ctrl_light(uint8_t state);
 void toyota_ctrl_sunroof(uint8_t state);
 void toyota_ctrl_trunk(uint8_t state);
 void toyota_ctrl_findcar(uint8_t state);
-void toyota_keepalive(void);
+
+void toyota_init(uint8_t type);
+void toyota_exit(uint8_t type);
+void toyota_keepalive(uint8_t type);
 uint8_t* toyota_data_stream(uint8_t pid, uint8_t *len);
 bool toyota_engine_on(void);
 void toyota_clear_fault_code(void);

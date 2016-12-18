@@ -29,6 +29,8 @@ uint16_t mVehiclesInterval;
 UpdateItem mUpdateList[PID_SIZE];
 Vehicles mVehicles;
 
+uint8_t mIndex = 0;
+
 bool mEngineOn = FALSE;
 
 void setVehiclesInterval(uint16_t interval)
@@ -64,17 +66,24 @@ void vehicles_task(void *unused)
 
         for(i = 0; i < PID_SIZE; i++) {
             xdelay(2);
+            mIndex = i;
             vehicle_lock();
+            if(mVehicles.dataOps->init != NULL) {
+                mVehicles.dataOps->init(getTransmitType());
+            }
             if(mVehicles.dataOps->transfer_data_stream == NULL) {
                 loge("transfer data stream function is null");
                 vehicle_unlock();
                 break;
             }
-            vehicle_unlock();
             data = mVehicles.dataOps->transfer_data_stream(i, &len);
+            if(mVehicles.dataOps->exit != NULL) {
+                mVehicles.dataOps->exit(getTransmitType());
+            }
+            vehicle_unlock();
             if(data == NULL) {
                 if(len != UNSUPPORTED_LEN) {
-                    i = (i < ENG_DATA_SIZE) ? ENG_DATA_SIZE : i;
+                    i = (i < ENG_DATA_END) ? ENG_DATA_END : i;
                 }
                 continue;
             }
@@ -86,6 +95,19 @@ void vehicles_task(void *unused)
             mUpdateList[i].updated = TRUE;
         }
     }
+}
+
+uint8_t getTransmitType(void)
+{
+    if(mIndex >= ENG_DATA_START && mIndex <= ENG_DATA_END)
+        return TYPE_ENG;
+    if(mIndex >= AT_DATA_START && mIndex <= AT_DATA_END)
+        return TYPE_AT;
+    if(mIndex >= ABS_DATA_START && mIndex <= ABS_DATA_END)
+        return TYPE_ABS;
+    if(mIndex >= BCM_DATA_START && mIndex <= BCM_DATA_END)
+        return TYPE_BCM;
+    return TYPE_ENG;
 }
 
 void keepalive_task(void *unused)
@@ -101,12 +123,12 @@ void keepalive_task(void *unused)
                 mVehicles.init == FALSE) {
             continue;
         }
-        /*
+        vehicle_lock();
         if(mVehicles.dataOps->keepalive != NULL) {
             //send keepalive
-            mVehicles.dataOps->keepalive();
+            mVehicles.dataOps->keepalive(getTransmitType());
         }
-        */
+        vehicle_unlock();
     }
 }
 
@@ -138,6 +160,7 @@ void control_task(void *unused)
         val = ctrlMsg->value;
         cmd_id = ctrlMsg->cmd_id;
         vehicle_lock();
+        mIndex = BCM_DATA_START;
         switch(id) {
             case CONTROL_WINDOW:
                 mVehicles.ctrlOps->control_window(val);
@@ -217,7 +240,6 @@ void vehicles_init(void)
             (OS_OPT      )OS_OPT_TASK_STK_CHK|OS_OPT_TASK_STK_CLR,
             (OS_ERR 	* )&err);				
     //keepalive thread
-    /*
     OSTaskCreate((OS_TCB 	* )&KeepaliveTaskTCB,
             (CPU_CHAR	* )"Keepalive task",
             (OS_TASK_PTR )keepalive_task,
@@ -231,7 +253,6 @@ void vehicles_init(void)
             (void   	* )0,
             (OS_OPT      )OS_OPT_TASK_STK_CHK|OS_OPT_TASK_STK_CLR,
             (OS_ERR 	* )&err);
-            */
     memset(&mVehicles, 0x00, sizeof(Vehicles));
     flexcan_init(CAN_500K);
     mVehicles.init = FALSE;

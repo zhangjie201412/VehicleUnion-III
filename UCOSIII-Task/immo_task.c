@@ -38,12 +38,13 @@ void immo_task(void *p_arg)
     while(1)
     {
         immo_lock = get_immo_data();
-//        logi("immo_lock = %02x", immo_lock);
         OSTimeDlyHMSM(0,0,1,0,OS_OPT_TIME_HMSM_STRICT,&err); //—” ±200ms
         if(immo_lock == 0x38) {
             rf_lock();
+            //logi("rf lock");
         } else {
             rf_unlock();
+            //logi("rf unlock");
         }
 
     }
