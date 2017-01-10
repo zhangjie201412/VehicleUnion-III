@@ -199,10 +199,17 @@ void transmit_callback_task(void *unused)
                         logi("##GM##");
                         vehicle_setup(VEHICLE_GM);
                         flexcan_set_engine_id(0x7e8);
-                    } else if(!strcmp(item->valuestring, "vag")) {
-                        logi("##VAG##");
+                    } else if(!strcmp(item->valuestring, "vag1")) {
+                        logi("##VAG1##");
                         vehicle_setup(VEHICLE_VAG);
-                    } else {
+                    } else if(!strcmp(item->valuestring, "vag")) {
+                        logi("##PASSAT##");
+                        vehicle_setup(VEHICLE_PASSAT);
+                    } else if(!strcmp(item->valuestring, "greatwall")) {
+                        logi("##HAVAL##");
+                        vehicle_setup(VEHICLE_HAVAL);
+                    }
+                    else {
                         logi("##EOBD##");
                         vehicle_setup(VEHICLE_EOBD);
                         flexcan_set_engine_id(0x7e8);

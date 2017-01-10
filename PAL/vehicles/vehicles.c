@@ -8,6 +8,8 @@
 #include "gm.h"
 #include "toyota.h"
 #include "vag.h"
+#include "haval.h"
+#include "passat.h"
 #include "config.h"
 #include "rf_module.h"
 
@@ -280,8 +282,14 @@ void vehicle_setup(uint8_t type)
         gm_setup(&mVehicles);
     } else if(type == VEHICLE_VAG) {
         vag_setup(&mVehicles);
-    } else if(type == VEHICLE_EOBD) {
-        eobd_setup(&mVehicles);
+    } else if(type == VEHICLE_PASSAT) {
+        passat_setup(&mVehicles);
+    } else if(type == VEHICLE_HAVAL) {
+        haval_setup(&mVehicles);
+    }
+    
+    else if(type == VEHICLE_EOBD) {
+        //eobd_setup(&mVehicles);
     }
 }
 

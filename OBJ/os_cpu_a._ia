@@ -1,1 +1,0 @@
---cpu Cortex-M3 -g --apcs=interwork --pd "__MICROLIB SETA 1" -I "E:\Keil\ARM\INC" -I "E:\Keil\ARM\INC\ST\STM32F10x" --list ".\List\os_cpu_a.lst" --xref -o "..\OBJ\os_cpu_a.o" --depend "..\OBJ\os_cpu_a.d" "..\UCOSIII\uCOS-III\Ports\ARM-Cortex-M3\Generic\RealView\os_cpu_a.s"

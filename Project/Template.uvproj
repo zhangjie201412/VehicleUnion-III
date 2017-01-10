@@ -196,7 +196,7 @@
             <AdsLsun>1</AdsLsun>
             <AdsLven>1</AdsLven>
             <AdsLsxf>1</AdsLsxf>
-            <RvctClst>0</RvctClst>
+            <RvctClst>1</RvctClst>
             <GenPPlst>0</GenPPlst>
             <AdsCpuType>"Cortex-M3"</AdsCpuType>
             <RvctDeviceName></RvctDeviceName>
@@ -334,10 +334,10 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>4</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
-            <OneElfS>0</OneElfS>
+            <OneElfS>1</OneElfS>
             <Strict>0</Strict>
             <EnumInt>0</EnumInt>
             <PlainCh>0</PlainCh>
@@ -895,6 +895,16 @@
               <FileName>vag.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\PAL\vehicles\vag.c</FilePath>
+            </File>
+            <File>
+              <FileName>haval.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PAL\vehicles\haval.c</FilePath>
+            </File>
+            <File>
+              <FileName>passat.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PAL\vehicles\passat.c</FilePath>
             </File>
           </Files>
         </Group>
