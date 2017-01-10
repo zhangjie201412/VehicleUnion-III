@@ -5,14 +5,14 @@
                           AREA ||i.passat_check_fault_code||, CODE, READONLY, ALIGN=1
 
                   passat_check_fault_code PROC
-;;;498    
-;;;499    uint32_t *passat_check_fault_code(uint8_t id, uint8_t *len)
+;;;529    
+;;;530    uint32_t *passat_check_fault_code(uint8_t id, uint8_t *len)
 000000  2000              MOVS     r0,#0
-;;;500    {
-;;;501        return NULL;
-;;;502    }
+;;;531    {
+;;;532        return NULL;
+;;;533    }
 000002  4770              BX       lr
-;;;503    
+;;;534    
                           ENDP
 
 
@@ -27,11 +27,11 @@
                           REQUIRE _printf_int_dec
                           REQUIRE _printf_str
                   passat_clear_fault_code PROC
-;;;503    
-;;;504    void passat_clear_fault_code(void)
+;;;534    
+;;;535    void passat_clear_fault_code(void)
 000000  b508              PUSH     {r3,lr}
-;;;505    {
-;;;506        logi("%s", __func__);
+;;;536    {
+;;;537        logi("%s", __func__);
 000002  4668              MOV      r0,sp
 000004  f7fffffe          BL       OSTimeGet
 000008  4908              LDR      r1,|L2.44|
@@ -47,15 +47,15 @@
 000024  a003              ADR      r0,|L2.52|
 000026  f7fffffe          BL       __2printf
                   |L2.42|
-;;;507    }
+;;;538    }
 00002a  bd08              POP      {r3,pc}
-;;;508    
+;;;539    
                           ENDP
 
                   |L2.44|
                           DCD      DEBUG_MODE
                   |L2.48|
-                          DCD      ||.constdata||+0x84
+                          DCD      ||.constdata||+0xc0
                   |L2.52|
 000034  5b253035          DCB      "[%05d.%03d/I]: %s\r\n",0
 000038  642e2530
@@ -74,12 +74,12 @@
                           REQUIRE _printf_int_dec
                           REQUIRE _printf_str
                   passat_ctrl_door PROC
-;;;356    
-;;;357    void passat_ctrl_door(uint8_t state)
+;;;384    
+;;;385    void passat_ctrl_door(uint8_t state)
 000000  b51c              PUSH     {r2-r4,lr}
-;;;358    {
+;;;386    {
 000002  4604              MOV      r4,r0
-;;;359        logi("%s: state = %d", __func__, state);
+;;;387        logi("%s: state = %d", __func__, state);
 000004  a801              ADD      r0,sp,#4
 000006  f7fffffe          BL       OSTimeGet
 00000a  4909              LDR      r1,|L3.48|
@@ -96,15 +96,15 @@
 000028  9400              STR      r4,[sp,#0]
 00002a  f7fffffe          BL       __2printf
                   |L3.46|
-;;;360    }
+;;;388    }
 00002e  bd1c              POP      {r2-r4,pc}
-;;;361    
+;;;389    
                           ENDP
 
                   |L3.48|
                           DCD      DEBUG_MODE
                   |L3.52|
-                          DCD      ||.constdata||+0x13
+                          DCD      ||.constdata||+0x4f
                   |L3.56|
 000038  5b253035          DCB      "[%05d.%03d/I]: %s: state = %d\r\n",0
 00003c  642e2530
@@ -126,12 +126,12 @@
                           REQUIRE _printf_int_dec
                           REQUIRE _printf_str
                   passat_ctrl_findcar PROC
-;;;376    
-;;;377    void passat_ctrl_findcar(uint8_t state)
+;;;404    
+;;;405    void passat_ctrl_findcar(uint8_t state)
 000000  b51c              PUSH     {r2-r4,lr}
-;;;378    {
+;;;406    {
 000002  4604              MOV      r4,r0
-;;;379        logi("%s: state = %d", __func__, state);
+;;;407        logi("%s: state = %d", __func__, state);
 000004  a801              ADD      r0,sp,#4
 000006  f7fffffe          BL       OSTimeGet
 00000a  4909              LDR      r1,|L4.48|
@@ -148,15 +148,15 @@
 000028  9400              STR      r4,[sp,#0]
 00002a  f7fffffe          BL       __2printf
                   |L4.46|
-;;;380    }
+;;;408    }
 00002e  bd1c              POP      {r2-r4,pc}
-;;;381    
+;;;409    
                           ENDP
 
                   |L4.48|
                           DCD      DEBUG_MODE
                   |L4.52|
-                          DCD      ||.constdata||+0x5c
+                          DCD      ||.constdata||+0x98
                   |L4.56|
 000038  5b253035          DCB      "[%05d.%03d/I]: %s: state = %d\r\n",0
 00003c  642e2530
@@ -178,12 +178,12 @@
                           REQUIRE _printf_int_dec
                           REQUIRE _printf_str
                   passat_ctrl_light PROC
-;;;361    
-;;;362    void passat_ctrl_light(uint8_t state)
+;;;389    
+;;;390    void passat_ctrl_light(uint8_t state)
 000000  b51c              PUSH     {r2-r4,lr}
-;;;363    {
+;;;391    {
 000002  4604              MOV      r4,r0
-;;;364        logi("%s: state = %d", __func__, state);
+;;;392        logi("%s: state = %d", __func__, state);
 000004  a801              ADD      r0,sp,#4
 000006  f7fffffe          BL       OSTimeGet
 00000a  4909              LDR      r1,|L5.48|
@@ -200,15 +200,15 @@
 000028  9400              STR      r4,[sp,#0]
 00002a  f7fffffe          BL       __2printf
                   |L5.46|
-;;;365    }
+;;;393    }
 00002e  bd1c              POP      {r2-r4,pc}
-;;;366    
+;;;394    
                           ENDP
 
                   |L5.48|
                           DCD      DEBUG_MODE
                   |L5.52|
-                          DCD      ||.constdata||+0x24
+                          DCD      ||.constdata||+0x60
                   |L5.56|
 000038  5b253035          DCB      "[%05d.%03d/I]: %s: state = %d\r\n",0
 00003c  642e2530
@@ -230,12 +230,12 @@
                           REQUIRE _printf_int_dec
                           REQUIRE _printf_str
                   passat_ctrl_sunroof PROC
-;;;366    
-;;;367    void passat_ctrl_sunroof(uint8_t state)
+;;;394    
+;;;395    void passat_ctrl_sunroof(uint8_t state)
 000000  b51c              PUSH     {r2-r4,lr}
-;;;368    {
+;;;396    {
 000002  4604              MOV      r4,r0
-;;;369        logi("%s: state = %d", __func__, state);
+;;;397        logi("%s: state = %d", __func__, state);
 000004  a801              ADD      r0,sp,#4
 000006  f7fffffe          BL       OSTimeGet
 00000a  4909              LDR      r1,|L6.48|
@@ -252,15 +252,15 @@
 000028  9400              STR      r4,[sp,#0]
 00002a  f7fffffe          BL       __2printf
                   |L6.46|
-;;;370    }
+;;;398    }
 00002e  bd1c              POP      {r2-r4,pc}
-;;;371    
+;;;399    
                           ENDP
 
                   |L6.48|
                           DCD      DEBUG_MODE
                   |L6.52|
-                          DCD      ||.constdata||+0x36
+                          DCD      ||.constdata||+0x72
                   |L6.56|
 000038  5b253035          DCB      "[%05d.%03d/I]: %s: state = %d\r\n",0
 00003c  642e2530
@@ -282,12 +282,12 @@
                           REQUIRE _printf_int_dec
                           REQUIRE _printf_str
                   passat_ctrl_trunk PROC
-;;;371    
-;;;372    void passat_ctrl_trunk(uint8_t state)
+;;;399    
+;;;400    void passat_ctrl_trunk(uint8_t state)
 000000  b51c              PUSH     {r2-r4,lr}
-;;;373    {
+;;;401    {
 000002  4604              MOV      r4,r0
-;;;374        logi("%s: state = %d", __func__, state);
+;;;402        logi("%s: state = %d", __func__, state);
 000004  a801              ADD      r0,sp,#4
 000006  f7fffffe          BL       OSTimeGet
 00000a  4909              LDR      r1,|L7.48|
@@ -304,15 +304,15 @@
 000028  9400              STR      r4,[sp,#0]
 00002a  f7fffffe          BL       __2printf
                   |L7.46|
-;;;375    }
+;;;403    }
 00002e  bd1c              POP      {r2-r4,pc}
-;;;376    
+;;;404    
                           ENDP
 
                   |L7.48|
                           DCD      DEBUG_MODE
                   |L7.52|
-                          DCD      ||.constdata||+0x4a
+                          DCD      ||.constdata||+0x86
                   |L7.56|
 000038  5b253035          DCB      "[%05d.%03d/I]: %s: state = %d\r\n",0
 00003c  642e2530
@@ -334,12 +334,12 @@
                           REQUIRE _printf_int_dec
                           REQUIRE _printf_str
                   passat_ctrl_window PROC
-;;;351    
-;;;352    void passat_ctrl_window(uint8_t state)
+;;;379    
+;;;380    void passat_ctrl_window(uint8_t state)
 000000  b51c              PUSH     {r2-r4,lr}
-;;;353    {
+;;;381    {
 000002  4604              MOV      r4,r0
-;;;354        logi("%s: state = %d", __func__, state);
+;;;382        logi("%s: state = %d", __func__, state);
 000004  a801              ADD      r0,sp,#4
 000006  f7fffffe          BL       OSTimeGet
 00000a  4909              LDR      r1,|L8.48|
@@ -356,15 +356,15 @@
 000028  9400              STR      r4,[sp,#0]
 00002a  f7fffffe          BL       __2printf
                   |L8.46|
-;;;355    }
+;;;383    }
 00002e  bd1c              POP      {r2-r4,pc}
-;;;356    
+;;;384    
                           ENDP
 
                   |L8.48|
                           DCD      DEBUG_MODE
                   |L8.52|
-                          DCD      ||.constdata||
+                          DCD      ||.constdata||+0x3c
                   |L8.56|
 000038  5b253035          DCB      "[%05d.%03d/I]: %s: state = %d\r\n",0
 00003c  642e2530
@@ -378,348 +378,382 @@
                           AREA ||i.passat_data_stream||, CODE, READONLY, ALIGN=2
 
                   passat_data_stream PROC
-;;;404    
-;;;405    uint8_t* passat_data_stream(uint8_t pid, uint8_t *len)
+;;;435    
+;;;436    uint8_t* passat_data_stream(uint8_t pid, uint8_t *len)
 000000  e92d4ff0          PUSH     {r4-r11,lr}
-;;;406    {
-000004  b093              SUB      sp,sp,#0x4c
+;;;437    {
+000004  b08b              SUB      sp,sp,#0x2c
 000006  4604              MOV      r4,r0
-000008  468a              MOV      r10,r1
-;;;407        int8_t ret, i, j;
-;;;408        uint8_t valid_len;
-;;;409        uint8_t offset;
-;;;410    
-;;;411        CanTxMsg txMsg;
-;;;412        CanRxMsg *rxMsg;
-;;;413        uint8_t rx_index = 0x00;
-;;;414        uint8_t l_bytes;
-;;;415        uint8_t l_packages;
-;;;416        uint8_t index = 0;
-;;;417        CanTxMsg endPackage =
+000008  4689              MOV      r9,r1
+;;;438        int8_t ret, i, j;
+;;;439        uint8_t valid_len;
+;;;440        uint8_t offset;
+;;;441    
+;;;442        CanTxMsg txMsg;
+;;;443        CanRxMsg *rxMsg;
+;;;444        uint8_t rx_index = 0x00;
+;;;445        uint8_t l_bytes;
+;;;446        uint8_t l_packages;
+;;;447        uint8_t index = 0;
+;;;448        CanTxMsg endPackage =
 00000a  2214              MOVS     r2,#0x14
-00000c  4954              LDR      r1,|L9.352|
-00000e  a80d              ADD      r0,sp,#0x34
+00000c  4952              LDR      r1,|L9.344|
+00000e  a805              ADD      r0,sp,#0x14
 000010  f7fffffe          BL       __aeabi_memcpy4
-;;;418        {
-;;;419            0x740, 0x18db33f1,
-;;;420            CAN_ID_STD, CAN_RTR_DATA,
-;;;421            1,
-;;;422            0xb1
-;;;423        };
-;;;424    
-;;;425        if(passatSupportItems[pid].support != SUPPORTED) {
-000014  4853              LDR      r0,|L9.356|
+;;;449        {
+;;;450            0x740, 0x18db33f1,
+;;;451            CAN_ID_STD, CAN_RTR_DATA,
+;;;452            1,
+;;;453            0xb1
+;;;454        };
+;;;455    
+;;;456        if(passatSupportItems[pid].support != SUPPORTED) {
+000014  4851              LDR      r0,|L9.348|
 000016  eb000044          ADD      r0,r0,r4,LSL #1
 00001a  7840              LDRB     r0,[r0,#1]
 00001c  2801              CMP      r0,#1
 00001e  d003              BEQ      |L9.40|
-;;;426            *len = UNSUPPORTED_LEN;
+;;;457            *len = UNSUPPORTED_LEN;
 000020  21ff              MOVS     r1,#0xff
-000022  f88a1000          STRB     r1,[r10,#0]
-;;;427            return NULL;
+000022  f8891000          STRB     r1,[r9,#0]
+;;;458            return NULL;
 000026  e04b              B        |L9.192|
                   |L9.40|
-;;;428        }
-;;;429    
-;;;430        xdelay(2);
+;;;459        }
+;;;460    
+;;;461        xdelay(2);
 000028  2002              MOVS     r0,#2
 00002a  f7fffffe          BL       xdelay
-;;;431        valid_len = passatStdDs[pid].valid_len;
-00002e  484d              LDR      r0,|L9.356|
+;;;462        valid_len = passatStdDs[pid].valid_len;
+00002e  484b              LDR      r0,|L9.348|
 000030  eb0401c4          ADD      r1,r4,r4,LSL #3
 000034  3072              ADDS     r0,r0,#0x72
 000036  eb000441          ADD      r4,r0,r1,LSL #1
-00003a  a906              ADD      r1,sp,#0x18           ;411
-00003c  7c65              LDRB     r5,[r4,#0x11]
-;;;432        offset = passatStdDs[pid].offset;
-00003e  f894b010          LDRB     r11,[r4,#0x10]
-;;;433        txMsg.StdId = passatStdDs[pid].txId;
-000042  8860              LDRH     r0,[r4,#2]
-;;;434        txMsg.IDE = CAN_ID_STD;
-000044  9006              STR      r0,[sp,#0x18]
-000046  2000              MOVS     r0,#0
-000048  f88d0020          STRB     r0,[sp,#0x20]
-;;;435        txMsg.DLC = passatStdDs[pid].len;
-00004c  7920              LDRB     r0,[r4,#4]
-00004e  f88d0022          STRB     r0,[sp,#0x22]
-;;;436        for(i = 0; i < txMsg.DLC; i++) {
-000052  2000              MOVS     r0,#0
-000054  e005              B        |L9.98|
-                  |L9.86|
-;;;437            txMsg.Data[i] = passatStdDs[pid].data[i];
-000056  1822              ADDS     r2,r4,r0
-000058  180b              ADDS     r3,r1,r0
-00005a  7952              LDRB     r2,[r2,#5]
-00005c  1c40              ADDS     r0,r0,#1              ;436
-00005e  72da              STRB     r2,[r3,#0xb]
-000060  b240              SXTB     r0,r0                 ;436
-                  |L9.98|
-000062  f89d2022          LDRB     r2,[sp,#0x22]         ;436
-000066  4282              CMP      r2,r0                 ;436
-000068  dcf5              BGT      |L9.86|
-;;;438        }
-;;;439    
-;;;440        if(txMsg.StdId == PASSAT_ENG_ID) {
-00006a  9806              LDR      r0,[sp,#0x18]
-;;;441            ret = flexcan_ioctl(DIR_BI, &txMsg, passatStdDs[pid].rxId, 1);
-;;;442            if(ret > 0) {
-;;;443                rxMsg = flexcan_dump();
-;;;444                if(rxMsg->DLC == 1) {
-;;;445                    rx_index = rxMsg->Data[0];
-;;;446                } else {
-;;;447                    return NULL;
-;;;448                }
-;;;449                //get first package
-;;;450                ret = flexcan_ioctl(DIR_INPUT, NULL, passatStdDs[pid].rxId, 1);
-;;;451                if(ret > 0) {
-;;;452                    rxMsg = flexcan_dump();
-;;;453                    l_bytes = rxMsg->Data[2];
-;;;454                    l_packages = 1 + (l_bytes - 5) / 7;
-;;;455                    if((l_bytes - 5) % 7 != 0) {
-;;;456                        l_packages ++;
-;;;457                    }
-;;;458                    index = 0;
-;;;459                    for(i = 3; i < 8; i++) {
-;;;460                        passat_rx_buf[index ++] = rxMsg->Data[i];
-00006c  f8df80f8          LDR      r8,|L9.360|
-000070  f5b06fe8          CMP      r0,#0x740             ;440
-;;;461                    }
-;;;462    
-;;;463                    ret = flexcan_ioctl(DIR_INPUT, NULL, passatStdDs[pid].rxId, l_packages);
-;;;464                    if(ret > 0) {
-;;;465                        for(i = 0; i < ret; i++) {
-;;;466                            rxMsg = flexcan_dump();
-;;;467                            for(j = 1; j < rxMsg->DLC; j++) {
-;;;468                                passat_rx_buf[index ++] = rxMsg->Data[j];
-;;;469                            }
-;;;470                        }
-;;;471                    }
-;;;472                    rx_index += l_packages;
-;;;473                    endPackage.Data[0] = rx_index;
-;;;474                    flexcan_send_frame(&endPackage);
-;;;475                }
-;;;476    
-;;;477                *len = l_bytes;
-;;;478                return passat_rx_buf + offset;
-;;;479            } else {
-;;;480                return NULL;
-;;;481            }
-;;;482    
-;;;483        } else {
-;;;484            ret = flexcan_ioctl(DIR_BI, &txMsg, passatStdDs[pid].rxId, 1);
-000074  89e2              LDRH     r2,[r4,#0xe]
-000076  f04f0301          MOV      r3,#1
-00007a  f04f0003          MOV      r0,#3
-00007e  d016              BEQ      |L9.174|
-000080  f7fffffe          BL       flexcan_ioctl
-;;;485            if(ret > 0) {
-000084  2800              CMP      r0,#0
-000086  dd1b              BLE      |L9.192|
-;;;486                rxMsg = flexcan_dump();
-000088  f7fffffe          BL       flexcan_dump
-;;;487                for(i = 0; i < 8; i++) {
-00008c  2100              MOVS     r1,#0
-00008e  4642              MOV      r2,r8                 ;460
-                  |L9.144|
-;;;488                    passat_rx_buf[i] = rxMsg->Data[i];
-000090  1843              ADDS     r3,r0,r1
-000092  7adb              LDRB     r3,[r3,#0xb]
-000094  5453              STRB     r3,[r2,r1]
-000096  1c49              ADDS     r1,r1,#1              ;487
-000098  b249              SXTB     r1,r1                 ;487
-00009a  2908              CMP      r1,#8                 ;487
-00009c  dbf8              BLT      |L9.144|
-;;;489                }
-;;;490                *len = valid_len;
-00009e  f88a5000          STRB     r5,[r10,#0]
-;;;491                return passat_rx_buf + offset;
-0000a2  bf00              NOP      
-                  |L9.164|
+00003a  4669              MOV      r1,sp                 ;442
+00003c  f894a011          LDRB     r10,[r4,#0x11]
+;;;463        offset = passatStdDs[pid].offset;
+000040  f894b010          LDRB     r11,[r4,#0x10]
+;;;464        txMsg.StdId = passatStdDs[pid].txId;
+000044  8860              LDRH     r0,[r4,#2]
+;;;465        txMsg.IDE = CAN_ID_STD;
+000046  9000              STR      r0,[sp,#0]
+000048  2000              MOVS     r0,#0
+00004a  f88d0008          STRB     r0,[sp,#8]
+;;;466        txMsg.DLC = passatStdDs[pid].len;
+00004e  7920              LDRB     r0,[r4,#4]
+000050  f88d000a          STRB     r0,[sp,#0xa]
+;;;467        for(i = 0; i < txMsg.DLC; i++) {
+000054  2000              MOVS     r0,#0
+000056  e005              B        |L9.100|
+                  |L9.88|
+;;;468            txMsg.Data[i] = passatStdDs[pid].data[i];
+000058  1822              ADDS     r2,r4,r0
+00005a  180b              ADDS     r3,r1,r0
+00005c  7952              LDRB     r2,[r2,#5]
+00005e  1c40              ADDS     r0,r0,#1              ;467
+000060  72da              STRB     r2,[r3,#0xb]
+000062  b240              SXTB     r0,r0                 ;467
+                  |L9.100|
+000064  f89d200a          LDRB     r2,[sp,#0xa]          ;467
+000068  4282              CMP      r2,r0                 ;467
+00006a  dcf5              BGT      |L9.88|
+;;;469        }
+;;;470    
+;;;471        if(txMsg.StdId == PASSAT_ENG_ID) {
+00006c  9800              LDR      r0,[sp,#0]
+;;;472            ret = flexcan_ioctl(DIR_BI, &txMsg, passatStdDs[pid].rxId, 1);
+;;;473            if(ret > 0) {
+;;;474                rxMsg = flexcan_dump();
+;;;475                if(rxMsg->DLC == 1) {
+;;;476                    rx_index = rxMsg->Data[0];
+;;;477                } else {
+;;;478                    return NULL;
+;;;479                }
+;;;480                //get first package
+;;;481                ret = flexcan_ioctl(DIR_INPUT, NULL, passatStdDs[pid].rxId, 1);
+;;;482                if(ret > 0) {
+;;;483                    rxMsg = flexcan_dump();
+;;;484                    l_bytes = rxMsg->Data[2];
+;;;485                    l_packages = 1 + (l_bytes - 5) / 7;
+;;;486                    if((l_bytes - 5) % 7 != 0) {
+;;;487                        l_packages ++;
+;;;488                    }
+;;;489                    index = 0;
+;;;490                    for(i = 3; i < 8; i++) {
+;;;491                        passat_rx_buf[index ++] = rxMsg->Data[i];
+00006e  f8df80f0          LDR      r8,|L9.352|
+000072  f5b06fe8          CMP      r0,#0x740             ;471
+;;;492                    }
+;;;493    
+;;;494                    ret = flexcan_ioctl(DIR_INPUT, NULL, passatStdDs[pid].rxId, l_packages);
+;;;495                    if(ret > 0) {
+;;;496                        for(i = 0; i < ret; i++) {
+;;;497                            rxMsg = flexcan_dump();
+;;;498                            for(j = 1; j < rxMsg->DLC; j++) {
+;;;499                                passat_rx_buf[index ++] = rxMsg->Data[j];
+;;;500                            }
+;;;501                        }
+;;;502                    }
+;;;503                    rx_index += l_packages;
+;;;504                    endPackage.Data[0] = rx_index;
+;;;505                    flexcan_send_frame(&endPackage);
+;;;506                }
+;;;507    
+;;;508                *len = valid_len;
+;;;509                return passat_rx_buf + offset;
+;;;510            } else {
+;;;511                return NULL;
+;;;512            }
+;;;513    
+;;;514        } else {
+;;;515            ret = flexcan_ioctl(DIR_BI, &txMsg, passatStdDs[pid].rxId, 1);
+000076  89e2              LDRH     r2,[r4,#0xe]
+000078  f04f0301          MOV      r3,#1
+00007c  f04f0003          MOV      r0,#3
+000080  d015              BEQ      |L9.174|
+000082  f7fffffe          BL       flexcan_ioctl
+;;;516            if(ret > 0) {
+000086  2800              CMP      r0,#0
+000088  dd1a              BLE      |L9.192|
+;;;517                rxMsg = flexcan_dump();
+00008a  f7fffffe          BL       flexcan_dump
+;;;518                for(i = 0; i < 8; i++) {
+00008e  2100              MOVS     r1,#0
+000090  4642              MOV      r2,r8                 ;491
+                  |L9.146|
+;;;519                    passat_rx_buf[i] = rxMsg->Data[i];
+000092  1843              ADDS     r3,r0,r1
+000094  7adb              LDRB     r3,[r3,#0xb]
+000096  5453              STRB     r3,[r2,r1]
+000098  1c49              ADDS     r1,r1,#1              ;518
+00009a  b249              SXTB     r1,r1                 ;518
+00009c  2908              CMP      r1,#8                 ;518
+00009e  dbf8              BLT      |L9.146|
+                  |L9.160|
+;;;520                }
+;;;521                *len = valid_len;
+0000a0  f889a000          STRB     r10,[r9,#0]
+;;;522                return passat_rx_buf + offset;
 0000a4  eb08000b          ADD      r0,r8,r11
                   |L9.168|
-;;;492            } else {
-;;;493                return NULL;
-;;;494            }
-;;;495        }
-;;;496    
-;;;497    }
-0000a8  b013              ADD      sp,sp,#0x4c
+;;;523            } else {
+;;;524                return NULL;
+;;;525            }
+;;;526        }
+;;;527    
+;;;528    }
+0000a8  b00b              ADD      sp,sp,#0x2c
 0000aa  e8bd8ff0          POP      {r4-r11,pc}
                   |L9.174|
 0000ae  f7fffffe          BL       flexcan_ioctl
-0000b2  2800              CMP      r0,#0                 ;442
+0000b2  2800              CMP      r0,#0                 ;473
 0000b4  dd04              BLE      |L9.192|
 0000b6  f7fffffe          BL       flexcan_dump
-0000ba  7a81              LDRB     r1,[r0,#0xa]          ;444
-0000bc  2901              CMP      r1,#1                 ;444
+0000ba  7a81              LDRB     r1,[r0,#0xa]          ;475
+0000bc  2901              CMP      r1,#1                 ;475
 0000be  d001              BEQ      |L9.196|
                   |L9.192|
-0000c0  2000              MOVS     r0,#0                 ;493
+0000c0  2000              MOVS     r0,#0                 ;524
 0000c2  e7f1              B        |L9.168|
                   |L9.196|
-0000c4  7ac0              LDRB     r0,[r0,#0xb]          ;445
-0000c6  9005              STR      r0,[sp,#0x14]         ;450
-0000c8  2301              MOVS     r3,#1                 ;450
-0000ca  89e2              LDRH     r2,[r4,#0xe]          ;450
-0000cc  2100              MOVS     r1,#0                 ;450
-0000ce  4618              MOV      r0,r3                 ;450
+0000c4  7ac0              LDRB     r0,[r0,#0xb]          ;476
+0000c6  900a              STR      r0,[sp,#0x28]         ;481
+0000c8  2301              MOVS     r3,#1                 ;481
+0000ca  89e2              LDRH     r2,[r4,#0xe]          ;481
+0000cc  2100              MOVS     r1,#0                 ;481
+0000ce  4618              MOV      r0,r3                 ;481
 0000d0  f7fffffe          BL       flexcan_ioctl
-0000d4  2800              CMP      r0,#0                 ;451
-0000d6  dd40              BLE      |L9.346|
+0000d4  2800              CMP      r0,#0                 ;482
+0000d6  dde3              BLE      |L9.160|
 0000d8  f7fffffe          BL       flexcan_dump
-0000dc  f890900d          LDRB     r9,[r0,#0xd]          ;453
-0000e0  2307              MOVS     r3,#7                 ;454
-0000e2  f1a90105          SUB      r1,r9,#5              ;454
-0000e6  fb91f2f3          SDIV     r2,r1,r3              ;454
-0000ea  1c55              ADDS     r5,r2,#1              ;454
-0000ec  fb031112          MLS      r1,r3,r2,r1           ;455
-0000f0  b2ee              UXTB     r6,r5                 ;454
-0000f2  b109              CBZ      r1,|L9.248|
-0000f4  1c76              ADDS     r6,r6,#1              ;456
-0000f6  b2f6              UXTB     r6,r6                 ;456
-                  |L9.248|
-0000f8  2500              MOVS     r5,#0                 ;458
-0000fa  2103              MOVS     r1,#3                 ;459
-0000fc  4642              MOV      r2,r8                 ;460
-                  |L9.254|
-0000fe  1843              ADDS     r3,r0,r1              ;460
-000100  1c49              ADDS     r1,r1,#1              ;459
-000102  7adb              LDRB     r3,[r3,#0xb]          ;460
-000104  5553              STRB     r3,[r2,r5]            ;460
-000106  1c6d              ADDS     r5,r5,#1              ;460
-000108  b249              SXTB     r1,r1                 ;459
-00010a  b2ed              UXTB     r5,r5                 ;460
-00010c  2908              CMP      r1,#8                 ;459
-00010e  dbf6              BLT      |L9.254|
-000110  89e2              LDRH     r2,[r4,#0xe]          ;463
-000112  4633              MOV      r3,r6                 ;463
-000114  2100              MOVS     r1,#0                 ;463
-000116  2001              MOVS     r0,#1                 ;463
-000118  f7fffffe          BL       flexcan_ioctl
-00011c  1e07              SUBS     r7,r0,#0              ;463
-00011e  dd15              BLE      |L9.332|
-000120  2400              MOVS     r4,#0                 ;465
-000122  e011              B        |L9.328|
-                  |L9.292|
-000124  f7fffffe          BL       flexcan_dump
-000128  4601              MOV      r1,r0                 ;466
-00012a  2001              MOVS     r0,#1                 ;467
-00012c  4642              MOV      r2,r8                 ;460
-00012e  e006              B        |L9.318|
-                  |L9.304|
-000130  180b              ADDS     r3,r1,r0              ;468
-000132  7adb              LDRB     r3,[r3,#0xb]          ;468
-000134  5553              STRB     r3,[r2,r5]            ;468
-000136  1c6d              ADDS     r5,r5,#1              ;468
-000138  1c40              ADDS     r0,r0,#1              ;467
-00013a  b2ed              UXTB     r5,r5                 ;468
-00013c  b240              SXTB     r0,r0                 ;467
-                  |L9.318|
-00013e  7a8b              LDRB     r3,[r1,#0xa]          ;467
-000140  4283              CMP      r3,r0                 ;467
-000142  dcf5              BGT      |L9.304|
-000144  1c64              ADDS     r4,r4,#1              ;465
-000146  b264              SXTB     r4,r4                 ;465
+0000dc  7b41              LDRB     r1,[r0,#0xd]          ;484
+0000de  2307              MOVS     r3,#7                 ;485
+0000e0  1f49              SUBS     r1,r1,#5              ;485
+0000e2  fb91f2f3          SDIV     r2,r1,r3              ;485
+0000e6  1c55              ADDS     r5,r2,#1              ;485
+0000e8  fb031112          MLS      r1,r3,r2,r1           ;486
+0000ec  b2ee              UXTB     r6,r5                 ;485
+0000ee  b109              CBZ      r1,|L9.244|
+0000f0  1c76              ADDS     r6,r6,#1              ;487
+0000f2  b2f6              UXTB     r6,r6                 ;487
+                  |L9.244|
+0000f4  2500              MOVS     r5,#0                 ;489
+0000f6  2103              MOVS     r1,#3                 ;490
+0000f8  4642              MOV      r2,r8                 ;491
+                  |L9.250|
+0000fa  1843              ADDS     r3,r0,r1              ;491
+0000fc  1c49              ADDS     r1,r1,#1              ;490
+0000fe  7adb              LDRB     r3,[r3,#0xb]          ;491
+000100  5553              STRB     r3,[r2,r5]            ;491
+000102  1c6d              ADDS     r5,r5,#1              ;491
+000104  b249              SXTB     r1,r1                 ;490
+000106  b2ed              UXTB     r5,r5                 ;491
+000108  2908              CMP      r1,#8                 ;490
+00010a  dbf6              BLT      |L9.250|
+00010c  89e2              LDRH     r2,[r4,#0xe]          ;494
+00010e  4633              MOV      r3,r6                 ;494
+000110  2100              MOVS     r1,#0                 ;494
+000112  2001              MOVS     r0,#1                 ;494
+000114  f7fffffe          BL       flexcan_ioctl
+000118  1e07              SUBS     r7,r0,#0              ;494
+00011a  dd15              BLE      |L9.328|
+00011c  2400              MOVS     r4,#0                 ;496
+00011e  e011              B        |L9.324|
+                  |L9.288|
+000120  f7fffffe          BL       flexcan_dump
+000124  4601              MOV      r1,r0                 ;497
+000126  2001              MOVS     r0,#1                 ;498
+000128  4642              MOV      r2,r8                 ;491
+00012a  e006              B        |L9.314|
+                  |L9.300|
+00012c  180b              ADDS     r3,r1,r0              ;499
+00012e  7adb              LDRB     r3,[r3,#0xb]          ;499
+000130  5553              STRB     r3,[r2,r5]            ;499
+000132  1c6d              ADDS     r5,r5,#1              ;499
+000134  1c40              ADDS     r0,r0,#1              ;498
+000136  b2ed              UXTB     r5,r5                 ;499
+000138  b240              SXTB     r0,r0                 ;498
+                  |L9.314|
+00013a  7a8b              LDRB     r3,[r1,#0xa]          ;498
+00013c  4283              CMP      r3,r0                 ;498
+00013e  dcf5              BGT      |L9.300|
+000140  1c64              ADDS     r4,r4,#1              ;496
+000142  b264              SXTB     r4,r4                 ;496
+                  |L9.324|
+000144  42bc              CMP      r4,r7                 ;496
+000146  dbeb              BLT      |L9.288|
                   |L9.328|
-000148  42bc              CMP      r4,r7                 ;465
-00014a  dbeb              BLT      |L9.292|
-                  |L9.332|
-00014c  9805              LDR      r0,[sp,#0x14]         ;472
-00014e  4430              ADD      r0,r0,r6              ;472
-000150  f88d003f          STRB     r0,[sp,#0x3f]         ;473
-000154  a80d              ADD      r0,sp,#0x34           ;474
-000156  f7fffffe          BL       flexcan_send_frame
-                  |L9.346|
-00015a  f88a9000          STRB     r9,[r10,#0]           ;477
-00015e  e7a1              B        |L9.164|
-;;;498    
+000148  980a              LDR      r0,[sp,#0x28]         ;503
+00014a  4430              ADD      r0,r0,r6              ;503
+00014c  f88d001f          STRB     r0,[sp,#0x1f]         ;504
+000150  a805              ADD      r0,sp,#0x14           ;505
+000152  f7fffffe          BL       flexcan_send_frame
+000156  e7a3              B        |L9.160|
+;;;529    
                           ENDP
 
-                  |L9.352|
-                          DCD      ||.constdata||+0x70
-                  |L9.356|
+                  |L9.344|
+                          DCD      ||.constdata||+0xac
+                  |L9.348|
                           DCD      ||.data||
-                  |L9.360|
+                  |L9.352|
                           DCD      ||.bss||+0x34
 
-                          AREA ||i.passat_engine_on||, CODE, READONLY, ALIGN=2
+                          AREA ||i.passat_engine_on||, CODE, READONLY, ALIGN=1
 
                   passat_engine_on PROC
-;;;381    
-;;;382    bool passat_engine_on(void)
-000000  b510              PUSH     {r4,lr}
-;;;383    {
-;;;384        CanRxMsg *rxMsg;
-;;;385        int8_t ret = -1;
-;;;386        bool on = FALSE;
-000002  2400              MOVS     r4,#0
-;;;387    
-;;;388        ret = flexcan_ioctl(DIR_BI, &passatEngineCmd,
-000004  2301              MOVS     r3,#1
-000006  f44f62fd          MOV      r2,#0x7e8
-00000a  4906              LDR      r1,|L10.36|
-00000c  2003              MOVS     r0,#3
-00000e  f7fffffe          BL       flexcan_ioctl
-;;;389                0x7e8, 1);
-;;;390        if(ret > 0) {
-000012  2800              CMP      r0,#0
-000014  dd03              BLE      |L10.30|
-;;;391            rxMsg = flexcan_dump();
-000016  f7fffffe          BL       flexcan_dump
-;;;392            //check if the receive msg type is needed
-;;;393            //TODO: ???
-;;;394            if(rxMsg == NULL) {
-00001a  b100              CBZ      r0,|L10.30|
-;;;395                on = FALSE;
-;;;396            } else {
-;;;397                on = TRUE;
-00001c  2401              MOVS     r4,#1
-                  |L10.30|
-;;;398            }
-;;;399        } else {
-;;;400            on = FALSE;
-;;;401        }
-;;;402        return on;
-00001e  4620              MOV      r0,r4
-;;;403    }
-000020  bd10              POP      {r4,pc}
-;;;404    
+;;;409    
+;;;410    bool passat_engine_on(void)
+000000  2001              MOVS     r0,#1
+;;;411    {
+;;;412        CanRxMsg *rxMsg;
+;;;413        int8_t ret = -1;
+;;;414        bool on = FALSE;
+;;;415    
+;;;416    #if 0
+;;;417        ret = flexcan_ioctl(DIR_BI, &passatEngineCmd,
+;;;418                0x7e8, 1);
+;;;419        if(ret > 0) {
+;;;420            rxMsg = flexcan_dump();
+;;;421            //check if the receive msg type is needed
+;;;422            //TODO: ???
+;;;423            if(rxMsg == NULL) {
+;;;424                on = FALSE;
+;;;425            } else {
+;;;426                on = TRUE;
+;;;427            }
+;;;428        } else {
+;;;429            on = FALSE;
+;;;430        }
+;;;431        return on;
+;;;432    #endif
+;;;433        return TRUE;
+;;;434    }
+000002  4770              BX       lr
+;;;435    
                           ENDP
 
-000022  0000              DCW      0x0000
-                  |L10.36|
-                          DCD      ||.data||+0x474
 
                           AREA ||i.passat_exit||, CODE, READONLY, ALIGN=1
 
                   passat_exit PROC
-;;;346    {}
-;;;347    void passat_exit(uint8_t type)
+;;;374    }
+;;;375    void passat_exit(uint8_t type)
 000000  4770              BX       lr
-;;;348    {}
-;;;349    void passat_keepalive(uint8_t type)
+;;;376    {}
+;;;377    void passat_keepalive(uint8_t type)
                           ENDP
 
 
-                          AREA ||i.passat_init||, CODE, READONLY, ALIGN=1
+                          AREA ||i.passat_init||, CODE, READONLY, ALIGN=2
 
                   passat_init PROC
 ;;;344    
 ;;;345    void passat_init(uint8_t type)
-000000  4770              BX       lr
-;;;346    {}
-;;;347    void passat_exit(uint8_t type)
+000000  b530              PUSH     {r4,r5,lr}
+;;;346    {
+000002  b08f              SUB      sp,sp,#0x3c
+;;;347        CanTxMsg init[3] =
+000004  223c              MOVS     r2,#0x3c
+000006  490b              LDR      r1,|L12.52|
+000008  4668              MOV      r0,sp
+00000a  f7fffffe          BL       __aeabi_memcpy4
+;;;348        {
+;;;349            {
+;;;350                0x200, 0x18db33f1,
+;;;351                CAN_ID_STD, CAN_RTR_DATA,
+;;;352                7,
+;;;353                0x01, 0xc0, 0x00, 0x10, 0x00, 0x03, 0x01
+;;;354            },
+;;;355            {
+;;;356                0x740, 0x18db33f1,
+;;;357                CAN_ID_STD, CAN_RTR_DATA,
+;;;358                6,
+;;;359                0xa0, 0x0f, 0x8a, 0xff, 0x32, 0xff
+;;;360            },
+;;;361            {
+;;;362                0x740, 0x18db33f1,
+;;;363                CAN_ID_STD, CAN_RTR_DATA,
+;;;364                6,
+;;;365                0xa0, 0x0f, 0x8a, 0xff, 0x4a, 0xff
+;;;366            },
+;;;367        };
+;;;368        uint8_t i;
+;;;369    
+;;;370        for(i = 0; i < 3; i++) {
+00000e  2400              MOVS     r4,#0
+000010  ea4f050d          MOV.W    r5,sp                 ;347
+                  |L12.20|
+;;;371            flexcan_send_frame(&init[i]);
+000014  eb040084          ADD      r0,r4,r4,LSL #2
+000018  eb050080          ADD      r0,r5,r0,LSL #2
+00001c  f7fffffe          BL       flexcan_send_frame
+;;;372            xdelay_ms(200);
+000020  20c8              MOVS     r0,#0xc8
+000022  f7fffffe          BL       xdelay_ms
+000026  1c64              ADDS     r4,r4,#1              ;370
+000028  b2e4              UXTB     r4,r4                 ;370
+00002a  2c03              CMP      r4,#3                 ;370
+00002c  d3f2              BCC      |L12.20|
+;;;373        }
+;;;374    }
+00002e  b00f              ADD      sp,sp,#0x3c
+000030  bd30              POP      {r4,r5,pc}
+;;;375    void passat_exit(uint8_t type)
                           ENDP
 
+000032  0000              DCW      0x0000
+                  |L12.52|
+                          DCD      ||.constdata||
 
                           AREA ||i.passat_keepalive||, CODE, READONLY, ALIGN=1
 
                   passat_keepalive PROC
-;;;348    {}
-;;;349    void passat_keepalive(uint8_t type)
+;;;376    {}
+;;;377    void passat_keepalive(uint8_t type)
 000000  4770              BX       lr
-;;;350    {}
-;;;351    
+;;;378    {}
+;;;379    
                           ENDP
 
 
@@ -823,57 +857,72 @@
 
                           AREA ||.constdata||, DATA, READONLY, ALIGN=2
 
-                  __func__
-000000  70617373          DCB      0x70,0x61,0x73,0x73
-000004  61745f63          DCB      0x61,0x74,0x5f,0x63
-000008  74726c5f          DCB      0x74,0x72,0x6c,0x5f
-00000c  77696e64          DCB      0x77,0x69,0x6e,0x64
-000010  6f7700            DCB      0x6f,0x77,0x00
-                  |symbol_number.45|
-000013  70                DCB      0x70
-000014  61737361          DCB      0x61,0x73,0x73,0x61
-000018  745f6374          DCB      0x74,0x5f,0x63,0x74
-00001c  726c5f64          DCB      0x72,0x6c,0x5f,0x64
-000020  6f6f7200          DCB      0x6f,0x6f,0x72,0x00
-                  |symbol_number.46|
-000024  70617373          DCB      0x70,0x61,0x73,0x73
-000028  61745f63          DCB      0x61,0x74,0x5f,0x63
-00002c  74726c5f          DCB      0x74,0x72,0x6c,0x5f
-000030  6c696768          DCB      0x6c,0x69,0x67,0x68
-000034  7400              DCB      0x74,0x00
-                  |symbol_number.47|
-000036  7061              DCB      0x70,0x61
-000038  73736174          DCB      0x73,0x73,0x61,0x74
-00003c  5f637472          DCB      0x5f,0x63,0x74,0x72
-000040  6c5f7375          DCB      0x6c,0x5f,0x73,0x75
-000044  6e726f6f          DCB      0x6e,0x72,0x6f,0x6f
-000048  6600              DCB      0x66,0x00
-                  |symbol_number.48|
-00004a  7061              DCB      0x70,0x61
-00004c  73736174          DCB      0x73,0x73,0x61,0x74
-000050  5f637472          DCB      0x5f,0x63,0x74,0x72
-000054  6c5f7472          DCB      0x6c,0x5f,0x74,0x72
-000058  756e6b00          DCB      0x75,0x6e,0x6b,0x00
-                  |symbol_number.49|
-00005c  70617373          DCB      0x70,0x61,0x73,0x73
-000060  61745f63          DCB      0x61,0x74,0x5f,0x63
-000064  74726c5f          DCB      0x74,0x72,0x6c,0x5f
-000068  66696e64          DCB      0x66,0x69,0x6e,0x64
-00006c  63617200          DCB      0x63,0x61,0x72,0x00
+                          DCD      0x00000200
+                          DCD      0x18db33f1
+000008  00000701          DCB      0x00,0x00,0x07,0x01
+00000c  c0001000          DCB      0xc0,0x00,0x10,0x00
+000010  03010000          DCB      0x03,0x01,0x00,0x00
                           DCD      0x00000740
                           DCD      0x18db33f1
-000078  000001b1          DCB      0x00,0x00,0x01,0xb1
-                          DCD      0x00000000
-000080  00000000          DCB      0x00,0x00,0x00,0x00
+00001c  000006a0          DCB      0x00,0x00,0x06,0xa0
+000020  0f8aff32          DCB      0x0f,0x8a,0xff,0x32
+000024  ff000000          DCB      0xff,0x00,0x00,0x00
+                          DCD      0x00000740
+                          DCD      0x18db33f1
+000030  000006a0          DCB      0x00,0x00,0x06,0xa0
+000034  0f8aff4a          DCB      0x0f,0x8a,0xff,0x4a
+000038  ff000000          DCB      0xff,0x00,0x00,0x00
+                  __func__
+00003c  70617373          DCB      0x70,0x61,0x73,0x73
+000040  61745f63          DCB      0x61,0x74,0x5f,0x63
+000044  74726c5f          DCB      0x74,0x72,0x6c,0x5f
+000048  77696e64          DCB      0x77,0x69,0x6e,0x64
+00004c  6f7700            DCB      0x6f,0x77,0x00
+                  |symbol_number.46|
+00004f  70                DCB      0x70
+000050  61737361          DCB      0x61,0x73,0x73,0x61
+000054  745f6374          DCB      0x74,0x5f,0x63,0x74
+000058  726c5f64          DCB      0x72,0x6c,0x5f,0x64
+00005c  6f6f7200          DCB      0x6f,0x6f,0x72,0x00
+                  |symbol_number.47|
+000060  70617373          DCB      0x70,0x61,0x73,0x73
+000064  61745f63          DCB      0x61,0x74,0x5f,0x63
+000068  74726c5f          DCB      0x74,0x72,0x6c,0x5f
+00006c  6c696768          DCB      0x6c,0x69,0x67,0x68
+000070  7400              DCB      0x74,0x00
+                  |symbol_number.48|
+000072  7061              DCB      0x70,0x61
+000074  73736174          DCB      0x73,0x73,0x61,0x74
+000078  5f637472          DCB      0x5f,0x63,0x74,0x72
+00007c  6c5f7375          DCB      0x6c,0x5f,0x73,0x75
+000080  6e726f6f          DCB      0x6e,0x72,0x6f,0x6f
+000084  6600              DCB      0x66,0x00
+                  |symbol_number.49|
+000086  7061              DCB      0x70,0x61
+000088  73736174          DCB      0x73,0x73,0x61,0x74
+00008c  5f637472          DCB      0x5f,0x63,0x74,0x72
+000090  6c5f7472          DCB      0x6c,0x5f,0x74,0x72
+000094  756e6b00          DCB      0x75,0x6e,0x6b,0x00
                   |symbol_number.50|
-000084  70617373          DCB      0x70,0x61,0x73,0x73
-000088  61745f63          DCB      0x61,0x74,0x5f,0x63
-00008c  6c656172          DCB      0x6c,0x65,0x61,0x72
-000090  5f666175          DCB      0x5f,0x66,0x61,0x75
-000094  6c745f63          DCB      0x6c,0x74,0x5f,0x63
-000098  6f646500          DCB      0x6f,0x64,0x65,0x00
+000098  70617373          DCB      0x70,0x61,0x73,0x73
+00009c  61745f63          DCB      0x61,0x74,0x5f,0x63
+0000a0  74726c5f          DCB      0x74,0x72,0x6c,0x5f
+0000a4  66696e64          DCB      0x66,0x69,0x6e,0x64
+0000a8  63617200          DCB      0x63,0x61,0x72,0x00
+                          DCD      0x00000740
+                          DCD      0x18db33f1
+0000b4  000001b1          DCB      0x00,0x00,0x01,0xb1
+                          DCD      0x00000000
+0000bc  00000000          DCB      0x00,0x00,0x00,0x00
+                  |symbol_number.51|
+0000c0  70617373          DCB      0x70,0x61,0x73,0x73
+0000c4  61745f63          DCB      0x61,0x74,0x5f,0x63
+0000c8  6c656172          DCB      0x6c,0x65,0x61,0x72
+0000cc  5f666175          DCB      0x5f,0x66,0x61,0x75
+0000d0  6c745f63          DCB      0x6c,0x74,0x5f,0x63
+0000d4  6f646500          DCB      0x6f,0x64,0x65,0x00
 
-                          AREA ||.data||, DATA, ALIGN=2
+                          AREA ||.data||, DATA, ALIGN=1
 
                   passatSupportItems
 000000  00010101          DCB      0x00,0x01,0x01,0x01
@@ -903,7 +952,7 @@
 000060  30003100          DCB      0x30,0x00,0x31,0x00
 000064  32003300          DCB      0x32,0x00,0x33,0x00
 000068  34010000          DCB      0x34,0x01,0x00,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 000070  0000              DCB      0x00,0x00
                   passatStdDs
 000072  0000              DCB      0x00,0x00
@@ -935,7 +984,7 @@
 0000b8  0e020400          DCB      0x0e,0x02,0x04,0x00
 0000bc  07e0              DCW      0x07e0
 0000be  0800              DCB      0x08,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 0000c4  00000000          DCB      0x00,0x00,0x00,0x00
 0000c8  0000              DCW      0x0000
 0000ca  0000              DCB      0x00,0x00
@@ -948,7 +997,7 @@
 0000dc  0a020600          DCB      0x0a,0x02,0x06,0x00
 0000e0  07e0              DCW      0x07e0
 0000e2  0800              DCB      0x08,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 0000e8  00000000          DCB      0x00,0x00,0x00,0x00
 0000ec  0000              DCW      0x0000
 0000ee  0000              DCB      0x00,0x00
@@ -1000,79 +1049,79 @@
 00016c  03020e00          DCB      0x03,0x02,0x0e,0x00
 000170  07df              DCW      0x07df
 000172  0800              DCB      0x08,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 000178  00000000          DCB      0x00,0x00,0x00,0x00
 00017c  0000              DCW      0x0000
 00017e  0000              DCB      0x00,0x00
 000180  0f00              DCB      0x0f,0x00
 000182  07df              DCW      0x07df
 000184  08000000          DCB      0x08,0x00,0x00,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 00018c  0000              DCB      0x00,0x00
 00018e  0000              DCW      0x0000
 000190  00001000          DCB      0x00,0x00,0x10,0x00
 000194  07df              DCW      0x07df
 000196  0800              DCB      0x08,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 00019c  00000000          DCB      0x00,0x00,0x00,0x00
 0001a0  0000              DCW      0x0000
 0001a2  0000              DCB      0x00,0x00
 0001a4  1100              DCB      0x11,0x00
 0001a6  07df              DCW      0x07df
 0001a8  08000000          DCB      0x08,0x00,0x00,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 0001b0  0000              DCB      0x00,0x00
 0001b2  0000              DCW      0x0000
 0001b4  00001200          DCB      0x00,0x00,0x12,0x00
 0001b8  07e0              DCW      0x07e0
 0001ba  0800              DCB      0x08,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 0001c0  00000000          DCB      0x00,0x00,0x00,0x00
 0001c4  0000              DCW      0x0000
 0001c6  0000              DCB      0x00,0x00
 0001c8  1300              DCB      0x13,0x00
 0001ca  07e0              DCW      0x07e0
 0001cc  08000000          DCB      0x08,0x00,0x00,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 0001d4  0000              DCB      0x00,0x00
 0001d6  0000              DCW      0x0000
 0001d8  00001400          DCB      0x00,0x00,0x14,0x00
 0001dc  07e0              DCW      0x07e0
 0001de  0800              DCB      0x08,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 0001e4  00000000          DCB      0x00,0x00,0x00,0x00
 0001e8  0000              DCW      0x0000
 0001ea  0000              DCB      0x00,0x00
 0001ec  1500              DCB      0x15,0x00
 0001ee  07df              DCW      0x07df
 0001f0  08000000          DCB      0x08,0x00,0x00,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 0001f8  0000              DCB      0x00,0x00
 0001fa  0000              DCW      0x0000
 0001fc  00001600          DCB      0x00,0x00,0x16,0x00
 000200  07df              DCW      0x07df
 000202  0800              DCB      0x08,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 000208  00000000          DCB      0x00,0x00,0x00,0x00
 00020c  0000              DCW      0x0000
 00020e  0000              DCB      0x00,0x00
 000210  1700              DCB      0x17,0x00
 000212  07df              DCW      0x07df
 000214  08000000          DCB      0x08,0x00,0x00,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 00021c  0000              DCB      0x00,0x00
 00021e  0000              DCW      0x0000
 000220  00001800          DCB      0x00,0x00,0x18,0x00
 000224  07e0              DCW      0x07e0
 000226  0800              DCB      0x08,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 00022c  00000000          DCB      0x00,0x00,0x00,0x00
 000230  0000              DCW      0x0000
 000232  0000              DCB      0x00,0x00
 000234  1900              DCB      0x19,0x00
 000236  07e0              DCW      0x07e0
 000238  08000000          DCB      0x08,0x00,0x00,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 000240  0000              DCB      0x00,0x00
 000242  0000              DCW      0x0000
 000244  00001a00          DCB      0x00,0x00,0x1a,0x00
@@ -1085,33 +1134,33 @@
 000258  1b00              DCB      0x1b,0x00
 00025a  07df              DCW      0x07df
 00025c  08000000          DCB      0x08,0x00,0x00,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 000264  0000              DCB      0x00,0x00
 000266  0000              DCW      0x0000
 000268  00001c00          DCB      0x00,0x00,0x1c,0x00
 00026c  07df              DCW      0x07df
 00026e  0800              DCB      0x08,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 000274  00000000          DCB      0x00,0x00,0x00,0x00
 000278  0000              DCW      0x0000
 00027a  0000              DCB      0x00,0x00
 00027c  1d00              DCB      0x1d,0x00
 00027e  07e0              DCW      0x07e0
 000280  08000000          DCB      0x08,0x00,0x00,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 000288  0000              DCB      0x00,0x00
 00028a  0000              DCW      0x0000
 00028c  00001e00          DCB      0x00,0x00,0x1e,0x00
 000290  07e0              DCW      0x07e0
 000292  0800              DCB      0x08,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 000298  00000000          DCB      0x00,0x00,0x00,0x00
 00029c  0000              DCW      0x0000
 00029e  0000              DCB      0x00,0x00
 0002a0  1f00              DCB      0x1f,0x00
 0002a2  07c0              DCW      0x07c0
 0002a4  08000000          DCB      0x08,0x00,0x00,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 0002ac  0000              DCB      0x00,0x00
 0002ae  0000              DCW      0x0000
 0002b0  00002000          DCB      0x00,0x00,0x20,0x00
@@ -1124,33 +1173,33 @@
 0002c4  2100              DCB      0x21,0x00
 0002c6  07e1              DCW      0x07e1
 0002c8  08000000          DCB      0x08,0x00,0x00,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 0002d0  0000              DCB      0x00,0x00
 0002d2  0000              DCW      0x0000
 0002d4  00002200          DCB      0x00,0x00,0x22,0x00
 0002d8  07b0              DCW      0x07b0
 0002da  0800              DCB      0x08,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 0002e0  00000000          DCB      0x00,0x00,0x00,0x00
 0002e4  0000              DCW      0x0000
 0002e6  0000              DCB      0x00,0x00
 0002e8  2300              DCB      0x23,0x00
 0002ea  0710              DCW      0x0710
 0002ec  08000000          DCB      0x08,0x00,0x00,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 0002f4  0000              DCB      0x00,0x00
 0002f6  0000              DCW      0x0000
 0002f8  00002400          DCB      0x00,0x00,0x24,0x00
 0002fc  0710              DCW      0x0710
 0002fe  0800              DCB      0x08,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 000304  00000000          DCB      0x00,0x00,0x00,0x00
 000308  0000              DCW      0x0000
 00030a  0000              DCB      0x00,0x00
 00030c  2500              DCB      0x25,0x00
 00030e  07b0              DCW      0x07b0
 000310  08000000          DCB      0x08,0x00,0x00,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 000318  0000              DCB      0x00,0x00
 00031a  0000              DCW      0x0000
 00031c  00002600          DCB      0x00,0x00,0x26,0x00
@@ -1163,85 +1212,85 @@
 000330  2700              DCB      0x27,0x00
 000332  0765              DCW      0x0765
 000334  08000000          DCB      0x08,0x00,0x00,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 00033c  0000              DCB      0x00,0x00
 00033e  0000              DCW      0x0000
 000340  00002800          DCB      0x00,0x00,0x28,0x00
 000344  0765              DCW      0x0765
 000346  0800              DCB      0x08,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 00034c  00000000          DCB      0x00,0x00,0x00,0x00
 000350  0000              DCW      0x0000
 000352  0000              DCB      0x00,0x00
 000354  2900              DCB      0x29,0x00
 000356  0765              DCW      0x0765
 000358  08000000          DCB      0x08,0x00,0x00,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 000360  0000              DCB      0x00,0x00
 000362  0000              DCW      0x0000
 000364  00002a00          DCB      0x00,0x00,0x2a,0x00
 000368  0765              DCW      0x0765
 00036a  0800              DCB      0x08,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 000370  00000000          DCB      0x00,0x00,0x00,0x00
 000374  0000              DCW      0x0000
 000376  0000              DCB      0x00,0x00
 000378  2b00              DCB      0x2b,0x00
 00037a  070e              DCW      0x070e
 00037c  08000000          DCB      0x08,0x00,0x00,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 000384  0000              DCB      0x00,0x00
 000386  0000              DCW      0x0000
 000388  00002c00          DCB      0x00,0x00,0x2c,0x00
 00038c  074a              DCW      0x074a
 00038e  0800              DCB      0x08,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 000394  00000000          DCB      0x00,0x00,0x00,0x00
 000398  0000              DCW      0x0000
 00039a  0000              DCB      0x00,0x00
 00039c  2d00              DCB      0x2d,0x00
 00039e  0750              DCW      0x0750
 0003a0  08000000          DCB      0x08,0x00,0x00,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 0003a8  0000              DCB      0x00,0x00
 0003aa  0000              DCW      0x0000
 0003ac  00002e00          DCB      0x00,0x00,0x2e,0x00
 0003b0  0765              DCW      0x0765
 0003b2  0800              DCB      0x08,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 0003b8  00000000          DCB      0x00,0x00,0x00,0x00
 0003bc  0000              DCW      0x0000
 0003be  0000              DCB      0x00,0x00
 0003c0  2f00              DCB      0x2f,0x00
 0003c2  070e              DCW      0x070e
 0003c4  08000000          DCB      0x08,0x00,0x00,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 0003cc  0000              DCB      0x00,0x00
 0003ce  0000              DCW      0x0000
 0003d0  00003000          DCB      0x00,0x00,0x30,0x00
 0003d4  074a              DCW      0x074a
 0003d6  0800              DCB      0x08,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 0003dc  00000000          DCB      0x00,0x00,0x00,0x00
 0003e0  0000              DCW      0x0000
 0003e2  0000              DCB      0x00,0x00
 0003e4  3100              DCB      0x31,0x00
 0003e6  074a              DCW      0x074a
 0003e8  08000000          DCB      0x08,0x00,0x00,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 0003f0  0000              DCB      0x00,0x00
 0003f2  0000              DCW      0x0000
 0003f4  00003200          DCB      0x00,0x00,0x32,0x00
 0003f8  07c0              DCW      0x07c0
 0003fa  0800              DCB      0x08,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 000400  00000000          DCB      0x00,0x00,0x00,0x00
 000404  0000              DCW      0x0000
 000406  0000              DCB      0x00,0x00
 000408  3300              DCB      0x33,0x00
 00040a  07c0              DCW      0x07c0
 00040c  08000000          DCB      0x08,0x00,0x00,0x00
-                          DCD      0x00000000
+                          DCDU     0x00000000
 000414  0000              DCB      0x00,0x00
 000416  0000              DCW      0x0000
 000418  00003400          DCB      0x00,0x00,0x34,0x00
@@ -1252,9 +1301,13 @@
 000428  077e              DCW      0x077e
 00042a  0402              DCB      0x04,0x02
                           %        72
+
+                          AREA ||area_number.20||, DATA, ALIGN=2
+
+                          EXPORTAS ||area_number.20||, ||.data||
                   passatEngineCmd
                           DCD      0x000007df
                           DCD      0x18db33f1
-00047c  00000802          DCB      0x00,0x00,0x08,0x02
-000480  01000000          DCB      0x01,0x00,0x00,0x00
-000484  00000000          DCB      0x00,0x00,0x00,0x00
+000008  00000802          DCB      0x00,0x00,0x08,0x02
+00000c  01000000          DCB      0x01,0x00,0x00,0x00
+000010  00000000          DCB      0x00,0x00,0x00,0x00

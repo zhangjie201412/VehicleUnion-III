@@ -343,7 +343,35 @@ void passat_setup(Vehicles *vehicle)
 }
 
 void passat_init(uint8_t type)
-{}
+{
+    CanTxMsg init[3] =
+    {
+        {
+            0x200, 0x18db33f1,
+            CAN_ID_STD, CAN_RTR_DATA,
+            7,
+            0x01, 0xc0, 0x00, 0x10, 0x00, 0x03, 0x01
+        },
+        {
+            0x740, 0x18db33f1,
+            CAN_ID_STD, CAN_RTR_DATA,
+            6,
+            0xa0, 0x0f, 0x8a, 0xff, 0x32, 0xff
+        },
+        {
+            0x740, 0x18db33f1,
+            CAN_ID_STD, CAN_RTR_DATA,
+            6,
+            0xa0, 0x0f, 0x8a, 0xff, 0x4a, 0xff
+        },
+    };
+    uint8_t i;
+
+    for(i = 0; i < 3; i++) {
+        flexcan_send_frame(&init[i]);
+        xdelay_ms(200);
+    }
+}
 void passat_exit(uint8_t type)
 {}
 void passat_keepalive(uint8_t type)
@@ -385,6 +413,7 @@ bool passat_engine_on(void)
     int8_t ret = -1;
     bool on = FALSE;
 
+#if 0
     ret = flexcan_ioctl(DIR_BI, &passatEngineCmd,
             0x7e8, 1);
     if(ret > 0) {
@@ -400,6 +429,8 @@ bool passat_engine_on(void)
         on = FALSE;
     }
     return on;
+#endif
+    return TRUE;
 }
 
 uint8_t* passat_data_stream(uint8_t pid, uint8_t *len)
@@ -474,7 +505,7 @@ uint8_t* passat_data_stream(uint8_t pid, uint8_t *len)
                 flexcan_send_frame(&endPackage);
             }
 
-            *len = l_bytes;
+            *len = valid_len;
             return passat_rx_buf + offset;
         } else {
             return NULL;
